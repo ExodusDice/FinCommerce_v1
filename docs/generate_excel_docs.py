@@ -117,6 +117,26 @@ def compile_excel_timeline(md_path, xlsx_path):
     wb.save(xlsx_path)
     print(f"Generated Project_Timeline.xlsx successfully!")
 
+def compile_excel_erd(md_path, xlsx_path):
+    print(f"Compiling ERD Schema to {xlsx_path}...")
+    tables = parse_md_tables(md_path)
+    if not tables:
+        print("Error: No tables found in ERD.md")
+        return
+        
+    wb = Workbook()
+    table_names = ["USERS Schema", "SESSIONS Schema", "CHANNELS Schema", "PRODUCTS Schema", "MAPPINGS Schema"]
+    for i, table_data in enumerate(tables):
+        if i == 0:
+            ws = wb.active
+        else:
+            ws = wb.create_sheet()
+        title = table_names[i] if i < len(table_names) else f"Table_{i}"
+        create_styled_sheet(ws, table_data, title)
+        
+    wb.save(xlsx_path)
+    print(f"Generated ERD_Schema.xlsx successfully!")
+
 if __name__ == "__main__":
     docs_dir = os.path.dirname(__file__)
     
@@ -129,3 +149,8 @@ if __name__ == "__main__":
     timeline_xlsx = os.path.join(docs_dir, "Project_Timeline.xlsx")
     if os.path.exists(timeline_md):
         compile_excel_timeline(timeline_md, timeline_xlsx)
+        
+    erd_md = os.path.join(docs_dir, "ERD.md")
+    erd_xlsx = os.path.join(docs_dir, "ERD_Schema.xlsx")
+    if os.path.exists(erd_md):
+        compile_excel_erd(erd_md, erd_xlsx)

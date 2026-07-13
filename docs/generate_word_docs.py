@@ -181,7 +181,13 @@ if __name__ == "__main__":
         ("BRD.md", "BRD.docx"),
         ("FSD.md", "FSD.docx"),
         ("Technical_Spec.md", "Technical_Spec.docx"),
-        ("Test_Cases.md", "Test_Cases.docx")
+        ("Test_Cases.md", "Test_Cases.docx"),
+        ("DFD.md", "DFD.docx"),
+        ("Flowchart.md", "Flowchart.docx"),
+        ("ERD.md", "ERD.docx"),
+        ("UC_Diagram.md", "UC_Diagram.docx"),
+        ("Sequential_Diagram.md", "Sequential_Diagram.docx"),
+        ("API_Specs.md", "API_Specs.docx")
     ]
     for md_file, docx_file in files_to_convert:
         md_p = os.path.join(docs_dir, md_file)
