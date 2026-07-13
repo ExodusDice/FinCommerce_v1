@@ -26,6 +26,11 @@
       <div id="login-panel" class="view-panel active">
         <h2 class="card-title">Sign In to Dashboard</h2>
         
+        <!-- Social Login Connected State Badge -->
+        <div id="social-profile-badge" style="display: none;">
+          <!-- Rendered dynamically on successful Social Auth callback -->
+        </div>
+        
         <form id="login-form">
           
           <!-- Identity Input (Email / Phone) -->
@@ -65,7 +70,7 @@
               <span class="checkmark"></span>
               Remember Me
             </label>
-            <a href="#" class="forgot-link" id="btn-forgot" onclick="alert('Forgot Username/Password Flow:\nSelf-service recovery will verify your registration details, then dispatch an activation link to your email or an SMS verification code.')">Forgot Password?</a>
+            <a class="forgot-link" id="btn-forgot-trigger">Forgot Password?</a>
           </div>
 
           <!-- Sign In Actions -->
@@ -78,13 +83,13 @@
 
         <div class="divider">Or Connect With</div>
 
-        <!-- Social Sign Ins (Desktop & Mobile optimized) -->
+        <!-- Social Sign Ins (Interactive Popups) -->
         <div class="social-grid extended">
-          <button type="button" class="social-btn google" onclick="alert('Redirecting to Google Sign-In secure gateway...')" title="Login with Google">G</button>
-          <button type="button" class="social-btn facebook" onclick="alert('Redirecting to Facebook OAuth secure gateway...')" title="Login with Facebook">F</button>
-          <button type="button" class="social-btn tiktok" onclick="alert('Redirecting to TikTok Partner secure gateway...')" title="Login with TikTok">T</button>
-          <button type="button" class="social-btn line" onclick="alert('Redirecting to LINE Login API...')" title="Login with LINE">L</button>
-          <button type="button" class="social-btn apple" onclick="alert('Redirecting to Sign In with Apple authorization...')" title="Login with Apple">A</button>
+          <button type="button" class="social-btn google" data-provider="google" title="Login with Google">G</button>
+          <button type="button" class="social-btn facebook" data-provider="facebook" title="Login with Facebook">F</button>
+          <button type="button" class="social-btn tiktok" data-provider="tiktok" title="Login with TikTok">T</button>
+          <button type="button" class="social-btn line" data-provider="line" title="Login with LINE">L</button>
+          <button type="button" class="social-btn apple" data-provider="apple" title="Login with Apple">A</button>
         </div>
 
         <p style="text-align: center; font-size: 0.9rem; color: var(--color-text-muted);">
@@ -136,6 +141,77 @@
     </section>
 
   </main>
+
+  <!-- Forgot Username & Password Self-Service Recovery Modal Overlay -->
+  <div class="modal-overlay" id="recovery-modal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="recovery-modal-close" title="Close dialog">&times;</button>
+      <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Account Recovery Center</h3>
+      
+      <!-- Nav tabs for recovery modes -->
+      <div class="tab-nav">
+        <button class="tab-btn active" id="tab-btn-email">Email Link Recovery</button>
+        <button class="tab-btn" id="tab-btn-sms">SMS OTP Recovery</button>
+      </div>
+
+      <!-- Recovery Panel 1: Email Link -->
+      <div class="modal-panel active" id="panel-email-recovery">
+        <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+          Provide your registered merchant email address. We will email a secure, single-use login recovery link.
+        </p>
+        <form id="email-recovery-form">
+          <div class="form-group">
+            <label for="recovery-email-input" class="form-label">Email Address</label>
+            <input type="email" id="recovery-email-input" class="form-input" placeholder="somchai@gmail.com" required>
+          </div>
+          <button type="submit" class="btn btn-primary">Dispatch Recovery Link</button>
+        </form>
+      </div>
+
+      <!-- Recovery Panel 2: SMS OTP -->
+      <div class="modal-panel" id="panel-sms-recovery">
+        <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+          Provide your registered Thailand mobile phone number. We will dispatch a 6-digit verification code.
+        </p>
+        
+        <!-- Sub-Step 1: Request OTP -->
+        <div id="sms-step-request">
+          <form id="sms-recovery-request-form">
+            <div class="form-group">
+              <label for="recovery-phone-input" class="form-label">Mobile Number</label>
+              <input type="tel" id="recovery-phone-input" class="form-input" placeholder="08XXXXXXXX" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Send OTP Code</button>
+          </form>
+        </div>
+
+        <!-- Sub-Step 2: Enter OTP & Verify (Hidden initially) -->
+        <div id="sms-step-verify" style="display: none;">
+          <form id="sms-recovery-verify-form">
+            <div class="form-group">
+              <label for="recovery-otp-code" class="form-label">Enter 6-digit Code</label>
+              <input type="text" id="recovery-otp-code" class="form-input" placeholder="123456" maxlength="6" pattern="[0-9]{6}" required>
+            </div>
+            <button type="submit" class="btn btn-primary">Verify Code</button>
+          </form>
+        </div>
+
+        <!-- Sub-Step 3: Reset Password (Hidden initially) -->
+        <div id="sms-step-reset" style="display: none;">
+          <form id="sms-recovery-reset-form">
+            <div class="form-group">
+              <label for="recovery-new-password" class="form-label">Enter New Password</label>
+              <input type="password" id="recovery-new-password" class="form-input" placeholder="••••••••" required>
+              <span id="rec-pwd-strength-msg" class="feedback-msg"></span>
+              <span id="rec-pwd-leak-msg" class="feedback-msg"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Reset Password</button>
+          </form>
+        </div>
+
+      </div>
+    </div>
+  </div>
 
   <!-- Script Injection -->
   <script src="app.js"></script>

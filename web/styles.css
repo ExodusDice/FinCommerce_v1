@@ -166,7 +166,7 @@ header p {
   background: rgba(0, 0, 0, 0.5);
 }
 
-/* Password Toggle Icon */
+/* Password Visibility Toggle */
 .input-icon-btn {
   position: absolute;
   right: 0.85rem;
@@ -182,6 +182,27 @@ header p {
 
 .input-icon-btn:hover {
   color: var(--color-text-main);
+}
+
+/* Password Strength Bar */
+.pwd-strength-container {
+  height: 4px;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 2px;
+  margin-top: 0.5rem;
+  overflow: hidden;
+  display: none;
+}
+
+.pwd-strength-container.active {
+  display: block;
+}
+
+.pwd-strength-bar {
+  height: 100%;
+  width: 0%;
+  background-color: var(--color-error);
+  transition: var(--transition-smooth);
 }
 
 /* Input feedback states */
@@ -270,6 +291,7 @@ header p {
   color: var(--color-secondary);
   text-decoration: none;
   transition: var(--transition-smooth);
+  cursor: pointer;
 }
 
 .forgot-link:hover {
@@ -387,12 +409,48 @@ header p {
   transform: translateY(-2px);
 }
 
-/* Brand specific styling for fun */
+/* Brand specific styling */
 .social-btn.facebook:hover { color: #1877f2; border-color: #1877f2; }
 .social-btn.google:hover { color: #ea4335; border-color: #ea4335; }
 .social-btn.tiktok:hover { color: #ff0050; border-color: #ff0050; }
 .social-btn.line:hover { color: #06c755; border-color: #06c755; }
 .social-btn.apple:hover { color: #fff; border-color: #fff; }
+
+/* OAuth Logged In Profile Badge */
+.profile-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--glass-border);
+  border-radius: 12px;
+  padding: 0.75rem 1rem;
+  margin-bottom: 1.5rem;
+  animation: fadeIn 0.4s ease;
+}
+
+.profile-badge-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--color-primary);
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.profile-badge-info h4 {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.profile-badge-info p {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
 
 /* View Management (Login <=> OTP Verification screen toggling) */
 .view-panel {
@@ -546,6 +604,99 @@ header p {
 
 .captcha-container.active {
   display: flex;
+}
+
+/* Recovery/Forgot Password Modals */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 7, 18, 0.85);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  z-index: 1000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+  border-radius: 20px;
+  padding: 2rem;
+  width: 100%;
+  max-width: 440px;
+  position: relative;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 1rem;
+  right: 1.25rem;
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-size: 1.5rem;
+  cursor: pointer;
+  transition: var(--transition-smooth);
+}
+
+.modal-close-btn:hover {
+  color: var(--color-text-main);
+}
+
+.tab-nav {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid var(--glass-border);
+  padding-bottom: 0.5rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  color: var(--color-text-muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  padding-bottom: 0.5rem;
+  position: relative;
+  transition: var(--transition-smooth);
+}
+
+.tab-btn.active {
+  color: var(--color-secondary);
+}
+
+.tab-btn.active::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: var(--color-secondary);
+}
+
+.modal-panel {
+  display: none;
+}
+
+.modal-panel.active {
+  display: block;
+  animation: fadeIn 0.3s ease;
 }
 
 /* Keyframe Animations */

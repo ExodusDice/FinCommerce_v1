@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connect Account | Identity Center</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: #f3f4f6;
+      color: #1f2937;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin: 0;
+      padding: 1rem;
+    }
+    .oauth-box {
+      background: #ffffff;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+      width: 100%;
+      max-width: 400px;
+      padding: 2rem;
+      text-align: center;
+      border: 1px solid #e5e7eb;
+    }
+    .brand-logo {
+      font-size: 2.5rem;
+      margin-bottom: 1rem;
+      font-weight: bold;
+    }
+    .brand-name {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+    }
+    .brand-desc {
+      font-size: 0.875rem;
+      color: #6b7280;
+      margin-bottom: 1.5rem;
+    }
+    .profile-card {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1rem;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      cursor: pointer;
+      background: #fff;
+      transition: all 0.2s ease;
+      text-align: left;
+      margin-bottom: 0.75rem;
+    }
+    .profile-card:hover {
+      background: #f9fafb;
+      border-color: #d1d5db;
+      transform: translateY(-1px);
+    }
+    .profile-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: #3b82f6;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      font-weight: bold;
+    }
+    .profile-info h4 {
+      margin: 0;
+      font-size: 0.95rem;
+      font-weight: 600;
+    }
+    .profile-info p {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #6b7280;
+    }
+    .cancel-btn {
+      background: none;
+      border: none;
+      color: #9ca3af;
+      cursor: pointer;
+      font-size: 0.875rem;
+      margin-top: 1.5rem;
+      transition: color 0.2s ease;
+    }
+    .cancel-btn:hover {
+      color: #4b5563;
+      text-decoration: underline;
+    }
+    /* Brand Theme Colors */
+    .theme-google { color: #ea4335; }
+    .theme-facebook { color: #1877f2; }
+    .theme-tiktok { color: #010101; }
+    .theme-line { color: #06c755; }
+    .theme-apple { color: #000000; }
+  </style>
+</head>
+<body>
+
+  <div class="oauth-box">
+    <div id="brand-logo" class="brand-logo">G</div>
+    <div id="brand-name" class="brand-name">Sign In with Google</div>
+    <div class="brand-desc">to continue to <strong>FinCommerce</strong></div>
+    
+    <div id="profiles-container">
+      <!-- Generated profiles go here -->
+    </div>
+    
+    <button class="cancel-btn" onclick="window.close()">Cancel and return to FinCommerce</button>
+  </div>
+
+  <script>
+    // Read provider query parameter
+    const urlParams = new URLSearchParams(window.location.search);
+    const provider = urlParams.get('provider') || 'google';
+    
+    const brandLogo = document.getElementById('brand-logo');
+    const brandName = document.getElementById('brand-name');
+    const profilesContainer = document.getElementById('profiles-container');
+    
+    const providerConfig = {
+      google: { logo: '🤖', name: 'Google Account', class: 'theme-google', bg: '#ea4335' },
+      facebook: { logo: '📘', name: 'Facebook Connect', class: 'theme-facebook', bg: '#1877f2' },
+      tiktok: { logo: '🎵', name: 'TikTok Shop Partner', class: 'theme-tiktok', bg: '#010101' },
+      line: { logo: '🟢', name: 'LINE Auth Client', class: 'theme-line', bg: '#06c755' },
+      apple: { logo: '🍏', name: 'Apple ID Secure Sign-in', class: 'theme-apple', bg: '#000000' }
+    };
+    
+    const config = providerConfig[provider] || providerConfig.google;
+    
+    brandLogo.textContent = config.logo;
+    brandLogo.className = `brand-logo ${config.class}`;
+    brandName.textContent = `Sign in via ${config.name}`;
+    
+    // Profiles mock listing
+    const mockProfiles = [
+      { name: 'Somchai Prasert', email: 'somchai@gmail.com', avatar: 'S' },
+      { name: 'Wichai Dev', email: 'wichai.development@outlook.co.th', avatar: 'W' }
+    ];
+    
+    mockProfiles.forEach(profile => {
+      const card = document.createElement('div');
+      card.className = 'profile-card';
+      
+      const avatarDiv = document.createElement('div');
+      avatarDiv.className = 'profile-avatar';
+      avatarDiv.style.backgroundColor = config.bg;
+      avatarDiv.textContent = profile.avatar;
+      
+      const infoDiv = document.createElement('div');
+      infoDiv.className = 'profile-info';
+      infoDiv.innerHTML = `
+        <h4>${profile.name}</h4>
+        <p>${profile.email}</p>
+      `;
+      
+      card.appendChild(avatarDiv);
+      card.appendChild(infoDiv);
+      
+      card.addEventListener('click', () => {
+        // Post message payload to parent opener
+        if (window.opener) {
+          window.opener.postMessage({
+            status: 'SUCCESS',
+            provider: provider,
+            name: profile.name,
+            email: profile.email
+          }, '*');
+        }
+        window.close();
+      });
+      
+      profilesContainer.appendChild(card);
+    });
+  </script>
+</body>
+</html>

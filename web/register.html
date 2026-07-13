@@ -38,6 +38,7 @@
           <div class="input-wrapper">
             <input type="email" id="reg-email" class="form-input" placeholder="somchai@gmail.com" required>
           </div>
+          <span id="reg-email-error" class="feedback-msg"></span>
         </div>
 
         <!-- Thailand Mobile Number -->
@@ -46,6 +47,7 @@
           <div class="input-wrapper">
             <input type="tel" id="reg-phone" class="form-input" placeholder="08XXXXXXXX" required>
           </div>
+          <span id="reg-phone-error" class="feedback-msg"></span>
           <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">
             Tip: Prioritizing mobile registration is crucial for high regional user conversions.
           </span>
@@ -57,7 +59,11 @@
           <div class="input-wrapper">
             <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required>
           </div>
-          <!-- Strength feedback and audit feedback -->
+          <!-- Strength Visual Progress Meter -->
+          <div class="pwd-strength-container" id="reg-pwd-strength-container">
+            <div class="pwd-strength-bar" id="reg-pwd-strength-bar"></div>
+          </div>
+          <!-- Strength text details -->
           <span id="pwd-strength-msg" class="feedback-msg"></span>
           <span id="pwd-leak-msg" class="feedback-msg"></span>
         </div>
@@ -68,6 +74,7 @@
           <div class="input-wrapper">
             <input type="password" id="reg-password-confirm" class="form-input" placeholder="••••••••" required>
           </div>
+          <span id="pwd-confirm-error" class="feedback-msg"></span>
         </div>
 
         <!-- Terms and Conditions checkbox -->
