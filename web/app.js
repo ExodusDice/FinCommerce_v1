@@ -328,7 +328,19 @@ document.addEventListener('DOMContentLoaded', () => {
     if (event.data && event.data.status === 'SUCCESS') {
       const { provider, name, email } = event.data;
       
-      // Display OAuth connection badge
+      // Check if we are on the registration page
+      const fullnameInput = document.getElementById('fullname');
+      if (fullnameInput) {
+        fullnameInput.value = name;
+        if (regEmail) {
+          regEmail.value = email;
+          regEmail.dispatchEvent(new Event('input'));
+        }
+        alert(`Successfully imported registration profile from ${provider.toUpperCase()}.\nPlease fill in your mobile phone and password to complete registration.`);
+        return;
+      }
+
+      // Display OAuth connection badge on Login page
       const profileBadge = document.getElementById('social-profile-badge');
       if (profileBadge) {
         profileBadge.innerHTML = `
@@ -343,7 +355,7 @@ document.addEventListener('DOMContentLoaded', () => {
         profileBadge.style.display = 'block';
       }
       
-      // Autofill fields
+      // Autofill fields for login
       if (identityInput) {
         identityInput.value = email;
         identityInput.dispatchEvent(new Event('input'));
@@ -353,7 +365,14 @@ document.addEventListener('DOMContentLoaded', () => {
       }
       
       socialSessionActive = true;
-      alert(`Authenticated successfully via ${provider.toUpperCase()}.\nClick Sign In to open dashboard.`);
+      alert(`Authenticated successfully via ${provider.toUpperCase()}! Logging you in...`);
+      
+      // Auto-submit login form after a short delay
+      setTimeout(() => {
+        if (loginForm) {
+          loginForm.dispatchEvent(new Event('submit'));
+        }
+      }, 600);
     }
   });
 
@@ -600,6 +619,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
+  // Render list of active sessions with revoking logic
   function renderDeviceConsole() {
     const listContainer = document.getElementById('active-device-list');
     if (!listContainer) return;
