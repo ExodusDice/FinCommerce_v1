@@ -13,7 +13,8 @@
     .dashboard-layout {
       display: flex;
       width: 100%;
-      min-height: 90vh;
+      height: calc(100vh - 110px);
+      max-height: 780px;
       background: var(--glass-bg);
       backdrop-filter: blur(20px);
       -webkit-backdrop-filter: blur(20px);
@@ -25,17 +26,17 @@
     
     /* Sidebar Navigation */
     .sidebar {
-      width: 250px;
+      width: 240px;
       background: rgba(3, 7, 18, 0.6);
       border-right: 1px solid var(--glass-border);
-      padding: 2rem 1.25rem;
+      padding: 1.25rem 1rem;
       display: flex;
       flex-direction: column;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     
     .sidebar-brand h2 {
-      font-size: 1.5rem;
+      font-size: 1.35rem;
       font-weight: 700;
       background: linear-gradient(to right, #a5b4fc, #818cf8, #22d3ee);
       -webkit-background-clip: text;
@@ -45,7 +46,7 @@
     .sidebar-menu {
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: 0.35rem;
       list-style: none;
     }
     
@@ -55,15 +56,15 @@
       border: none;
       color: var(--color-text-muted);
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       font-weight: 500;
-      padding: 0.75rem 1rem;
+      padding: 0.65rem 0.85rem;
       text-align: left;
       border-radius: 8px;
       cursor: pointer;
       display: flex;
       align-items: center;
-      gap: 0.75rem;
+      gap: 0.65rem;
       transition: var(--transition-smooth);
     }
     
@@ -78,44 +79,40 @@
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--glass-border);
       border-radius: 12px;
-      padding: 1rem;
+      padding: 0.85rem;
     }
     
     .channel-status-box h4 {
-      font-size: 0.8rem;
+      font-size: 0.75rem;
       color: var(--color-text-muted);
       text-transform: uppercase;
       letter-spacing: 0.05em;
-      margin-bottom: 0.5rem;
+      margin-bottom: 0.4rem;
     }
     
     .channel-indicator {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.85rem;
-      margin-bottom: 0.4rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.3rem;
     }
     
     .status-dot {
-      width: 8px;
-      height: 8px;
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: var(--color-success);
-      box-shadow: 0 0 8px var(--color-success);
-    }
-    .status-dot.offline {
-      background: var(--color-error);
-      box-shadow: 0 0 8px var(--color-error);
+      box-shadow: 0 0 6px var(--color-success);
     }
     
     /* Content Panel */
     .content-area {
       flex: 1;
-      padding: 2.5rem;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
-      gap: 1.5rem;
+      gap: 1rem;
       overflow-y: auto;
     }
     
@@ -124,24 +121,25 @@
       justify-content: space-between;
       align-items: center;
       border-bottom: 1px solid var(--glass-border);
-      padding-bottom: 1rem;
+      padding-bottom: 0.75rem;
     }
     
     .merchant-profile {
       display: flex;
       align-items: center;
-      gap: 1rem;
+      gap: 0.85rem;
     }
     
     .profile-pic {
-      width: 40px;
-      height: 40px;
+      width: 36px;
+      height: 36px;
       border-radius: 50%;
       background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
       display: flex;
       align-items: center;
       justify-content: center;
       font-weight: 700;
+      font-size: 0.9rem;
     }
     
     /* Dynamic Panels */
@@ -157,33 +155,33 @@
     /* Analytics Cards Grid */
     .metrics-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 1.25rem;
-      margin-bottom: 1.5rem;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1rem;
     }
     
     .metric-card {
       background: rgba(255,255,255,0.03);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 1.5rem;
+      border-radius: 12px;
+      padding: 1rem;
     }
     
     .metric-card h4 {
       color: var(--color-text-muted);
-      font-size: 0.85rem;
-      margin-bottom: 0.5rem;
+      font-size: 0.8rem;
+      margin-bottom: 0.35rem;
     }
     
     .metric-card .value {
-      font-size: 1.75rem;
+      font-size: 1.45rem;
       font-weight: 700;
       color: var(--color-text-main);
     }
     
     .metric-card .change {
-      font-size: 0.8rem;
-      margin-top: 0.25rem;
+      font-size: 0.75rem;
+      margin-top: 0.2rem;
     }
     
     .change.positive { color: var(--color-success); }
@@ -195,28 +193,28 @@
       justify-content: space-between;
       align-items: center;
       background: rgba(0,0,0,0.2);
-      padding: 0.75rem 1.25rem;
-      border-radius: 12px;
-      margin-bottom: 1.5rem;
+      padding: 0.5rem 1rem;
+      border-radius: 10px;
+      margin-bottom: 1rem;
       flex-wrap: wrap;
-      gap: 1rem;
+      gap: 0.85rem;
     }
     
     .toggle-buttons {
       display: flex;
       background: rgba(255,255,255,0.05);
-      border-radius: 8px;
-      padding: 0.2rem;
+      border-radius: 6px;
+      padding: 0.15rem;
     }
     
     .toggle-btn {
       background: none;
       border: none;
       color: var(--color-text-muted);
-      padding: 0.4rem 1rem;
-      font-size: 0.85rem;
+      padding: 0.35rem 0.85rem;
+      font-size: 0.8rem;
       cursor: pointer;
-      border-radius: 6px;
+      border-radius: 5px;
       font-family: inherit;
       transition: var(--transition-smooth);
     }
@@ -228,21 +226,21 @@
     
     .checkbox-group {
       display: flex;
-      gap: 1.25rem;
+      gap: 1rem;
     }
     
     /* SVG Chart */
     .chart-container {
       background: rgba(255,255,255,0.02);
       border: 1px solid var(--glass-border);
-      border-radius: 16px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
     }
     
     .chart-wrapper {
       position: relative;
-      height: 200px;
+      height: 120px;
       width: 100%;
     }
     
@@ -259,19 +257,19 @@
       width: 100%;
       border-collapse: collapse;
       text-align: left;
-      font-size: 0.9rem;
+      font-size: 0.85rem;
     }
     
     .data-table th {
       background: rgba(99, 102, 241, 0.15);
       color: var(--color-text-main);
-      padding: 0.85rem 1.25rem;
+      padding: 0.75rem 1rem;
       font-weight: 600;
       border-bottom: 1px solid var(--glass-border);
     }
     
     .data-table td {
-      padding: 0.85rem 1.25rem;
+      padding: 0.75rem 1rem;
       border-bottom: 1px solid rgba(255,255,255,0.03);
       color: var(--color-text-muted);
     }
@@ -282,75 +280,75 @@
     }
     
     .table-mapping-box {
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       background: rgba(255,255,255,0.05);
-      padding: 0.25rem 0.5rem;
+      padding: 0.2rem 0.4rem;
       border-radius: 4px;
       display: inline-block;
-      margin-right: 0.25rem;
+      margin-right: 0.2rem;
     }
     
     /* strategic pricing calculator */
     .calculator-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 2rem;
+      gap: 1.5rem;
     }
     
     .slider-group {
-      margin-bottom: 1.5rem;
+      margin-bottom: 1.25rem;
     }
     
     .slider-header {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 0.5rem;
-      font-size: 0.9rem;
+      margin-bottom: 0.4rem;
+      font-size: 0.85rem;
     }
     
     .calc-slider {
       width: 100%;
       -webkit-appearance: none;
       background: rgba(255,255,255,0.1);
-      height: 6px;
-      border-radius: 3px;
+      height: 5px;
+      border-radius: 2px;
       outline: none;
     }
     
     .calc-slider::-webkit-slider-thumb {
       -webkit-appearance: none;
-      width: 18px;
-      height: 18px;
+      width: 16px;
+      height: 16px;
       border-radius: 50%;
       background: var(--color-secondary);
       cursor: pointer;
-      box-shadow: 0 0 8px var(--color-secondary);
+      box-shadow: 0 0 6px var(--color-secondary);
       transition: var(--transition-smooth);
     }
     
     .calc-result-box {
       background: rgba(99, 102, 241, 0.08);
       border: 1.5px dashed var(--color-primary);
-      border-radius: 16px;
-      padding: 2rem;
+      border-radius: 12px;
+      padding: 1.5rem;
       display: flex;
       flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1rem;
     }
     
     /* Print fulfillment logs panel */
     .print-console {
       background: rgba(0,0,0,0.5);
       border: 1px solid var(--glass-border);
-      border-radius: 12px;
-      padding: 1rem;
+      border-radius: 10px;
+      padding: 0.75rem;
       font-family: 'Courier New', Courier, monospace;
-      font-size: 0.8rem;
-      height: 120px;
+      font-size: 0.75rem;
+      height: 80px;
       overflow-y: auto;
-      color: #34d399; /* Green console */
+      color: #34d399;
     }
     
     /* Alert Settings overlay dialog */
@@ -372,13 +370,13 @@
 <body>
 
   <!-- Header Section -->
-  <header>
-    <h1>FinCommerce</h1>
-    <p>Centralized Thailand E-Commerce Management Suite</p>
+  <header style="margin-bottom: 0.75rem;">
+    <h1 style="font-size: 1.8rem;">FinCommerce</h1>
+    <p style="font-size: 0.85rem; margin-top: 0.15rem;">Centralized Thailand E-Commerce Management Suite</p>
   </header>
 
   <!-- Main Container Layout -->
-  <main class="main-container" style="max-width: 1100px;">
+  <main class="main-container" style="max-width: 1100px; gap: 0;">
     
     <div class="dashboard-layout">
       
@@ -430,17 +428,17 @@
         <!-- Top Navbar -->
         <div class="content-header">
           <div>
-            <h2 id="active-panel-title" style="font-size: 1.35rem; font-weight: 600;">Analytics Dashboard</h2>
-            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Current tenant session status: Active</span>
+            <h2 id="active-panel-title" style="font-size: 1.15rem; font-weight: 600;">Analytics Dashboard</h2>
+            <span style="font-size: 0.75rem; color: var(--color-text-muted);">Current tenant session status: Active</span>
           </div>
           
           <div class="merchant-profile">
             <div class="profile-pic">S</div>
             <div style="text-align: right;">
-              <h4 style="font-size: 0.9rem;" id="nav-merchant-name">Somchai Prasert</h4>
-              <p style="font-size: 0.75rem; color: var(--color-text-muted);" id="nav-merchant-email">somchai@gmail.com</p>
+              <h4 style="font-size: 0.85rem;" id="nav-merchant-name">Somchai Prasert</h4>
+              <p style="font-size: 0.7rem; color: var(--color-text-muted);" id="nav-merchant-email">somchai@gmail.com</p>
             </div>
-            <button class="revoke-btn" style="padding: 0.4rem 0.75rem;" onclick="location.href='index.html'">Sign Out</button>
+            <button class="revoke-btn" style="padding: 0.3rem 0.6rem; font-size: 0.8rem;" onclick="location.href='index.html'">Sign Out</button>
           </div>
         </div>
 
@@ -457,17 +455,17 @@
             </div>
             
             <div class="checkbox-group">
-              <label class="checkbox-container" style="font-size: 0.85rem;">
+              <label class="checkbox-container" style="font-size: 0.8rem;">
                 <input type="checkbox" checked id="filter-shopee">
                 <span class="checkmark"></span>
                 Shopee
               </label>
-              <label class="checkbox-container" style="font-size: 0.85rem;">
+              <label class="checkbox-container" style="font-size: 0.8rem;">
                 <input type="checkbox" checked id="filter-lazada">
                 <span class="checkmark"></span>
                 Lazada
               </label>
-              <label class="checkbox-container" style="font-size: 0.85rem;">
+              <label class="checkbox-container" style="font-size: 0.8rem;">
                 <input type="checkbox" checked id="filter-tiktok">
                 <span class="checkmark"></span>
                 TikTok Shop
@@ -496,39 +494,39 @@
 
           <!-- Dynamic SVG Sales Chart -->
           <div class="chart-container">
-            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Sales Distribution Curve (Lazada vs Shopee vs TikTok)</h3>
+            <h3 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.5rem;">Sales Distribution Curve (Lazada vs Shopee vs TikTok)</h3>
             <div class="chart-wrapper">
               <!-- Custom Animated SVG Chart -->
-              <svg viewBox="0 0 500 150" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+              <svg viewBox="0 0 500 120" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
                 <!-- Grid Lines -->
-                <line x1="40" y1="20" x2="480" y2="20" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
-                <line x1="40" y1="70" x2="480" y2="70" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
-                <line x1="40" y1="120" x2="480" y2="120" stroke="rgba(255,255,255,0.08)"/>
+                <line x1="40" y1="15" x2="480" y2="15" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
+                <line x1="40" y1="55" x2="480" y2="55" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
+                <line x1="40" y1="95" x2="480" y2="95" stroke="rgba(255,255,255,0.08)"/>
                 
                 <!-- Graph Lines -->
-                <path d="M40,110 Q120,70 200,90 T360,40 T480,30" fill="none" stroke="var(--color-primary)" stroke-width="3" stroke-linecap="round"/>
-                <path d="M40,120 Q120,100 200,60 T360,80 T480,50" fill="none" stroke="var(--color-secondary)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2"/>
+                <path d="M40,90 Q120,50 200,70 T360,30 T480,20" fill="none" stroke="var(--color-primary)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M40,100 Q120,80 200,45 T360,65 T480,40" fill="none" stroke="var(--color-secondary)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2"/>
                 
                 <!-- Points overlay -->
-                <circle cx="200" cy="90" r="4" fill="var(--color-primary)"/>
-                <circle cx="360" cy="40" r="4" fill="var(--color-primary)"/>
-                <circle cx="200" cy="60" r="4" fill="var(--color-secondary)"/>
+                <circle cx="200" cy="70" r="4" fill="var(--color-primary)"/>
+                <circle cx="360" cy="30" r="4" fill="var(--color-primary)"/>
+                <circle cx="200" cy="45" r="4" fill="var(--color-secondary)"/>
               </svg>
             </div>
           </div>
 
           <!-- Bulk Print AWB invoices queue panel (PP-10) -->
-          <div class="metrics-grid" style="grid-template-columns: 1fr 1.5fr;">
-            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
-              <h3 style="font-size: 1.05rem; font-weight: 600;">Bulk Printing Console</h3>
-              <p style="font-size: 0.8rem; color: var(--color-text-muted);">
+          <div class="metrics-grid" style="grid-template-columns: 1fr 1.5fr; margin-bottom: 0;">
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: center; gap: 0.5rem;">
+              <h3 style="font-size: 0.9rem; font-weight: 600;">Bulk Printing Console</h3>
+              <p style="font-size: 0.75rem; color: var(--color-text-muted);">
                 Print Air Waybills (AWB), Picklists, and Invoices across all connected shops in one action.
               </p>
-              <button class="btn btn-primary" id="btn-bulk-print">Print All Channel Documents</button>
+              <button class="btn btn-primary" id="btn-bulk-print" style="padding: 0.65rem 1rem; font-size: 0.85rem;">Print All Channel Documents</button>
             </div>
             
-            <div class="metric-card" style="padding: 1rem;">
-              <h4 style="margin-bottom: 0.5rem;">Fulfillment Progress Output</h4>
+            <div class="metric-card" style="padding: 0.75rem;">
+              <h4 style="margin-bottom: 0.35rem; font-size: 0.8rem;">Fulfillment Progress Output</h4>
               <div class="print-console" id="print-log-box">
                 [SYSTEM] Idle. Ready to receive print jobs...
               </div>
@@ -540,8 +538,8 @@
         <!-- Panel 2: Inventory & Mapping -->
         <div id="panel-inventory" class="dashboard-panel">
           <div class="filter-bar" style="justify-content: space-between;">
-            <input type="text" class="form-input" style="max-width: 300px; padding: 0.5rem 1rem;" placeholder="Search SKU or Name...">
-            <button class="btn btn-primary" style="width: auto; padding: 0.5rem 1.25rem;" id="btn-trigger-alert-modal">
+            <input type="text" class="form-input" style="max-width: 300px; padding: 0.4rem 0.85rem; font-size: 0.85rem;" placeholder="Search SKU or Name...">
+            <button class="btn btn-primary" style="width: auto; padding: 0.4rem 1rem; font-size: 0.85rem;" id="btn-trigger-alert-modal">
               <span>🔔</span> Configure Alerts
             </button>
           </div>
@@ -603,39 +601,39 @@
             
             <!-- Upload form -->
             <div class="metric-card">
-              <h3 style="font-size: 1.1rem; margin-bottom: 1.25rem;">Multi-Channel Listing Publisher</h3>
+              <h3 style="font-size: 1rem; margin-bottom: 1rem;">Multi-Channel Listing Publisher</h3>
               
               <form id="batch-upload-form">
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 1rem;">
                   <label class="form-label">Product Title</label>
                   <input type="text" class="form-input" placeholder="Enter centralized product title" required>
                 </div>
                 
                 <div class="metrics-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
-                  <div class="form-group">
+                  <div class="form-group" style="margin-bottom: 1rem;">
                     <label class="form-label">Master Price (THB)</label>
                     <input type="number" class="form-input" placeholder="299" required>
                   </div>
-                  <div class="form-group">
+                  <div class="form-group" style="margin-bottom: 1rem;">
                     <label class="form-label">Warehouse Stock</label>
                     <input type="number" class="form-input" placeholder="100" required>
                   </div>
                 </div>
 
-                <div class="form-group">
+                <div class="form-group" style="margin-bottom: 1rem;">
                   <label class="form-label">Target Channels</label>
-                  <div class="checkbox-group" style="margin-top: 0.5rem;">
-                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                  <div class="checkbox-group" style="margin-top: 0.4rem;">
+                    <label class="checkbox-container" style="font-size: 0.8rem;">
                       <input type="checkbox" checked>
                       <span class="checkmark"></span>
                       Shopee TH
                     </label>
-                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                    <label class="checkbox-container" style="font-size: 0.8rem;">
                       <input type="checkbox" checked>
                       <span class="checkmark"></span>
                       Lazada TH
                     </label>
-                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                    <label class="checkbox-container" style="font-size: 0.8rem;">
                       <input type="checkbox" checked>
                       <span class="checkmark"></span>
                       TikTok TH
@@ -643,23 +641,23 @@
                   </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary">Publish to Selected Platforms</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.75rem; font-size: 0.9rem;">Publish to Selected Platforms</button>
               </form>
             </div>
 
             <!-- Upload specs -->
             <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between;">
               <div>
-                <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;">Bulk Excel CSV Upload</h3>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted);">
+                <h3 style="font-size: 1rem; margin-bottom: 0.4rem;">Bulk Excel CSV Upload</h3>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">
                   Upload a standardized inventory worksheet catalog. System will auto-push corresponding listings.
                 </p>
               </div>
               
               <!-- Drag and drop zone -->
-              <div style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.01);" onclick="alert('Simulated file explorer open...')">
-                <span style="font-size: 2rem;">📤</span>
-                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-muted);">Drag and drop inventory template here</p>
+              <div style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 1.5rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.01);" onclick="alert('Simulated file explorer open...')">
+                <span style="font-size: 1.75rem;">📤</span>
+                <p style="font-size: 0.75rem; margin-top: 0.4rem; color: var(--color-text-muted);">Drag and drop inventory template here</p>
               </div>
             </div>
 
@@ -668,30 +666,30 @@
 
         <!-- Panel 4: Store Connections -->
         <div id="panel-connections" class="dashboard-panel">
-          <div class="metrics-grid">
+          <div class="metrics-grid" style="grid-template-columns: 1fr;">
             
-            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
               <div>
-                <h4 style="color:#fff; font-size:1rem; font-weight:600;">Shopee Thailand</h4>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: sh_th_99011 • Connected</p>
+                <h4 style="color:#fff; font-size:0.95rem; font-weight:600;">Shopee Thailand</h4>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">Store ID: sh_th_99011 • Connected</p>
               </div>
-              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to Shopee Open Partner Oauth gateway...')">Re-auth Store</button>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 0.85rem; font-size: 0.8rem;" onclick="alert('Redirecting to Shopee Open Partner Oauth gateway...')">Re-auth Store</button>
             </div>
 
-            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
               <div>
-                <h4 style="color:#fff; font-size:1rem; font-weight:600;">Lazada Thailand</h4>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: lz_th_00284 • Connected</p>
+                <h4 style="color:#fff; font-size:0.95rem; font-weight:600;">Lazada Thailand</h4>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">Store ID: lz_th_00284 • Connected</p>
               </div>
-              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to Lazada Open Platform Oauth gateway...')">Re-auth Store</button>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 0.85rem; font-size: 0.8rem;" onclick="alert('Redirecting to Lazada Open Platform Oauth gateway...')">Re-auth Store</button>
             </div>
 
-            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center; padding: 1rem;">
               <div>
-                <h4 style="color:#fff; font-size:1rem; font-weight:600;">TikTok Shop Thailand</h4>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: tt_th_88102 • Connected</p>
+                <h4 style="color:#fff; font-size:0.95rem; font-weight:600;">TikTok Shop Thailand</h4>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted);">Store ID: tt_th_88102 • Connected</p>
               </div>
-              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to TikTok Service Oauth gateway...')">Re-auth Store</button>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 0.85rem; font-size: 0.8rem;" onclick="alert('Redirecting to TikTok Service Oauth gateway...')">Re-auth Store</button>
             </div>
 
           </div>
@@ -702,7 +700,7 @@
           <div class="calculator-grid">
             
             <div class="metric-card">
-              <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem;">Target pricing simulator</h3>
+              <h3 style="font-size: 1rem; margin-bottom: 1.25rem;">Target pricing simulator</h3>
               
               <!-- Cost Slider -->
               <div class="slider-group">
@@ -734,21 +732,21 @@
 
             <!-- Calculation Output -->
             <div class="calc-result-box">
-              <h4 style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Optimized Price Recommendation</h4>
+              <h4 style="color: var(--color-text-muted); font-size: 0.85rem; text-transform: uppercase;">Optimized Price Recommendation</h4>
               
               <div style="text-align: center;">
-                <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-secondary);" id="calc-suggested-price">฿245.00</div>
-                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem;">Estimated Retail Price Target</p>
+                <div style="font-size: 2.2rem; font-weight: 700; color: var(--color-secondary);" id="calc-suggested-price">฿245.00</div>
+                <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-top: 0.15rem;">Estimated Retail Price Target</p>
               </div>
 
               <div class="metrics-grid" style="width: 100%; text-align: center; margin-bottom: 0;">
                 <div>
                   <h5 style="color: var(--color-text-muted); font-size: 0.75rem;">Estimated Net Margin</h5>
-                  <span style="font-weight: 600; color: var(--color-success); font-size: 1.1rem;" id="calc-profit-pct">38.7%</span>
+                  <span style="font-weight: 600; color: var(--color-success); font-size: 1.05rem;" id="calc-profit-pct">38.7%</span>
                 </div>
                 <div>
                   <h5 style="color: var(--color-text-muted); font-size: 0.75rem;">Competitor Median Price</h5>
-                  <span style="font-weight: 600; color: var(--color-warning); font-size: 1.1rem;">฿299.00</span>
+                  <span style="font-weight: 600; color: var(--color-warning); font-size: 1.05rem;">฿299.00</span>
                 </div>
               </div>
             </div>
