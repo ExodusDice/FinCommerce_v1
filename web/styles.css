@@ -385,10 +385,6 @@ header p {
   margin-bottom: 1.5rem;
 }
 
-.social-grid.extended {
-  grid-template-columns: repeat(5, 1fr);
-}
-
 .social-btn {
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid var(--glass-border);
@@ -409,14 +405,12 @@ header p {
   transform: translateY(-2px);
 }
 
-/* Brand specific styling */
-.social-btn.facebook:hover { color: #1877f2; border-color: #1877f2; }
-.social-btn.google:hover { color: #ea4335; border-color: #ea4335; }
-.social-btn.tiktok:hover { color: #ff0050; border-color: #ff0050; }
-.social-btn.line:hover { color: #06c755; border-color: #06c755; }
-.social-btn.apple:hover { color: #fff; border-color: #fff; }
+/* Brand colors */
+.social-btn.facebook:hover { border-color: #1877f2; }
+.social-btn.google:hover { border-color: #ea4335; }
+.social-btn.tiktok:hover { border-color: #fff; }
 
-/* OAuth Logged In Profile Badge */
+/* OAuth Profile Badge */
 .profile-badge {
   display: flex;
   align-items: center;
@@ -452,17 +446,7 @@ header p {
   color: var(--color-text-muted);
 }
 
-/* View Management (Login <=> OTP Verification screen toggling) */
-.view-panel {
-  display: none;
-}
-
-.view-panel.active {
-  display: block;
-  animation: fadeIn 0.4s ease;
-}
-
-/* OTP Digits input grid */
+/* OTP Digits grid */
 .otp-container {
   display: flex;
   justify-content: space-between;
@@ -489,7 +473,7 @@ header p {
   box-shadow: 0 0 10px rgba(6, 182, 212, 0.3);
 }
 
-/* Smart Device Session Manager Console */
+/* Smart Device Session Console */
 .device-manager-card {
   width: 100%;
   max-width: 900px;
@@ -606,7 +590,7 @@ header p {
   display: flex;
 }
 
-/* Recovery/Forgot Password Modals */
+/* Recovery Modals overlay */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -699,7 +683,17 @@ header p {
   animation: fadeIn 0.3s ease;
 }
 
-/* Keyframe Animations */
+/* View transitions panel */
+.view-panel {
+  display: none;
+}
+
+.view-panel.active {
+  display: block;
+  animation: fadeIn 0.4s ease;
+}
+
+/* Keyframes */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(5px); }
   to { opacity: 1; transform: translateY(0); }
@@ -726,14 +720,31 @@ header p {
   75% { transform: translateX(5px); }
 }
 
-/* Media Queries for Mobile Responsive UI/UX (Android / iOS Viewports) */
+/* Responsive styling */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+  }
+  
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--glass-border);
+    padding: 1.25rem;
+  }
+  
+  .content-area {
+    padding: 1.25rem;
+  }
+  
+  .calculator-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 600px) {
   body {
     padding: 1rem 0.5rem;
-  }
-  
-  header {
-    margin-bottom: 1.5rem;
   }
   
   header h1 {
@@ -742,44 +753,5 @@ header p {
   
   .glass-card {
     padding: 1.5rem;
-    border-radius: 16px;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3);
-  }
-  
-  .card-title {
-    font-size: 1.25rem;
-    margin-bottom: 1.25rem;
-  }
-  
-  .social-grid {
-    gap: 0.5rem;
-  }
-  
-  .social-btn {
-    padding: 0.5rem;
-    font-size: 1.1rem;
-  }
-  
-  .device-manager-card {
-    padding: 1.25rem;
-    border-radius: 16px;
-  }
-  
-  .device-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 0.85rem;
-  }
-  
-  .revoke-btn {
-    width: 100%;
-    text-align: center;
-  }
-  
-  .otp-input {
-    width: 40px;
-    height: 48px;
-    font-size: 1.25rem;
   }
 }

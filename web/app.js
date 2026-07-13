@@ -1,7 +1,11 @@
-// FinCommerce Frontend Logic - Phase 2 Extended
+// FinCommerce Frontend Logic - Unified Client Script
 
 document.addEventListener('DOMContentLoaded', () => {
-  // --- Common Elements ---
+  // ==========================================
+  // SECTION 1: AUTHENTICATION & REGISTRATION
+  // ==========================================
+  
+  // Elements
   const identityInput = document.getElementById('identity');
   const identityError = document.getElementById('identity-error');
   const passwordInput = document.getElementById('password');
@@ -36,7 +40,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderDeviceConsole();
   checkRememberMe();
 
-  // --- 1. Password Visibility Toggle ---
+  // Password Visibility Toggle
   if (passwordToggleBtn && passwordInput) {
     passwordToggleBtn.addEventListener('click', () => {
       const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
@@ -45,7 +49,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 2. Real-Time Login Credentials Input Feedback ---
+  // Real-Time Login Input Feedback
   if (identityInput) {
     identityInput.addEventListener('input', () => {
       const value = identityInput.value.trim();
@@ -80,7 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 3. Login Submission & Brute Force Lockout ---
+  // Login Submission
   if (loginForm) {
     loginForm.addEventListener('submit', (e) => {
       e.preventDefault();
@@ -99,13 +103,11 @@ document.addEventListener('DOMContentLoaded', () => {
       const password = passwordInput.value;
       const rememberMe = document.getElementById('remember-me')?.checked;
 
-      // Social OAuth login shortcut (requires no password verification)
       if (socialSessionActive) {
         establishSuccessfulLogin(username, rememberMe);
         return;
       }
 
-      // Standard verification mock
       if ((username === 'user@gmail.com' || username === '0812345678') && password === 'Admin123!') {
         establishSuccessfulLogin(username, rememberMe);
       } else {
@@ -129,7 +131,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 4. Two-Step Verification Handler ---
+  // 2-Step Verification inputs auto-shifting
   if (otpInputs && otpInputs.length > 0) {
     otpInputs.forEach((input, index) => {
       input.addEventListener('keyup', (e) => {
@@ -163,14 +165,14 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 5. Biometric Sign In Trigger (Mock WebAuthn) ---
+  // Biometric Sign In
   if (biometricBtn) {
     biometricBtn.addEventListener('click', () => {
       biometricBtn.style.boxShadow = '0 0 15px var(--color-secondary)';
       setTimeout(() => {
         if (confirm("Verify your identity using Face ID / Touch ID / Device Passcode.")) {
           alert('Biometric Login Succeeded!');
-          window.location.reload();
+          window.location.href = 'dashboard.html';
         } else {
           biometricBtn.style.boxShadow = 'none';
         }
@@ -178,7 +180,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 6. Account Registration Form Logic ---
+  // Registration Validations
   const regForm = document.getElementById('register-form');
   const regEmail = document.getElementById('reg-email');
   const regEmailError = document.getElementById('reg-email-error');
@@ -233,7 +235,6 @@ document.addEventListener('DOMContentLoaded', () => {
       
       strengthContainer.classList.add('active');
 
-      // Leaked Password Audit
       if (leakedList.includes(val.toLowerCase())) {
         leakMsg.textContent = '⚠ Warning: This password was found in public breaches. Choose another.';
         leakMsg.className = 'feedback-msg warning';
@@ -242,7 +243,6 @@ document.addEventListener('DOMContentLoaded', () => {
         leakMsg.className = 'feedback-msg success';
       }
 
-      // Strength evaluation rules
       let score = 0;
       if (val.length >= 8) score++;
       if (/[A-Z]/.test(val)) score++;
@@ -250,7 +250,6 @@ document.addEventListener('DOMContentLoaded', () => {
       if (/\d/.test(val)) score++;
       if (/[@$!%*?&]/.test(val)) score++;
 
-      // Update color and width
       if (score <= 2) {
         strengthBar.style.width = '33%';
         strengthBar.style.backgroundColor = 'var(--color-error)';
@@ -302,9 +301,8 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // --- 7. Social Logins Popups & Callbacks ---
+  // Social Logins
   const socialButtons = document.querySelectorAll('.social-btn[data-provider]');
-  
   socialButtons.forEach(btn => {
     btn.addEventListener('click', () => {
       const provider = btn.getAttribute('data-provider');
@@ -313,7 +311,6 @@ document.addEventListener('DOMContentLoaded', () => {
       const left = (window.screen.width / 2) - (width / 2);
       const top = (window.screen.height / 2) - (height / 2);
       
-      // Open centered popup window
       window.open(
         `oauth_mock.html?provider=${provider}`,
         'OAuth_Consent_Screen',
@@ -322,13 +319,11 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
 
-  // Message receiver hook for cross-window authorization
+  // Message receiver hook
   window.addEventListener('message', (event) => {
-    // Basic verification guard
     if (event.data && event.data.status === 'SUCCESS') {
       const { provider, name, email } = event.data;
       
-      // Check if we are on the registration page
       const fullnameInput = document.getElementById('fullname');
       if (fullnameInput) {
         fullnameInput.value = name;
@@ -340,7 +335,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
       }
 
-      // Display OAuth connection badge on Login page
       const profileBadge = document.getElementById('social-profile-badge');
       if (profileBadge) {
         profileBadge.innerHTML = `
@@ -355,19 +349,17 @@ document.addEventListener('DOMContentLoaded', () => {
         profileBadge.style.display = 'block';
       }
       
-      // Autofill fields for login
       if (identityInput) {
         identityInput.value = email;
         identityInput.dispatchEvent(new Event('input'));
       }
       if (passwordInput) {
-        passwordInput.value = '••••••••••••••••'; // visual mask indicator
+        passwordInput.value = '••••••••••••••••';
       }
       
       socialSessionActive = true;
       alert(`Authenticated successfully via ${provider.toUpperCase()}! Logging you in...`);
       
-      // Auto-submit login form after a short delay
       setTimeout(() => {
         if (loginForm) {
           loginForm.dispatchEvent(new Event('submit'));
@@ -376,7 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // --- 8. Account Recovery Modal Center (Forgot Pass/User) ---
+  // Account Recovery Modal
   const recoveryTrigger = document.getElementById('btn-forgot-trigger');
   const recoveryModal = document.getElementById('recovery-modal');
   const recoveryClose = document.getElementById('recovery-modal-close');
@@ -399,14 +391,12 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Handle outside click close modal
   window.addEventListener('click', (e) => {
     if (e.target === recoveryModal) {
       recoveryModal.classList.remove('active');
     }
   });
 
-  // Tab selections
   if (tabEmail && tabSms) {
     tabEmail.addEventListener('click', () => {
       tabEmail.classList.add('active');
@@ -423,7 +413,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Recovery Actions
   const emailRecoveryForm = document.getElementById('email-recovery-form');
   if (emailRecoveryForm) {
     emailRecoveryForm.addEventListener('submit', (e) => {
@@ -434,7 +423,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // SMS Step 1: Request OTP
   const smsReqForm = document.getElementById('sms-recovery-request-form');
   const smsStepRequest = document.getElementById('sms-step-request');
   const smsStepVerify = document.getElementById('sms-step-verify');
@@ -457,7 +445,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // SMS Step 2: Verify Code
   const smsVerifyForm = document.getElementById('sms-recovery-verify-form');
   if (smsVerifyForm) {
     smsVerifyForm.addEventListener('submit', (e) => {
@@ -474,7 +461,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // SMS Step 3: Reset password
   const smsResetForm = document.getElementById('sms-recovery-reset-form');
   const recNewPassword = document.getElementById('recovery-new-password');
   
@@ -524,16 +510,227 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+
+  // ==========================================
+  // SECTION 2: SaaS DASHBOARD INTERACTIONS
+  // ==========================================
+
+  // Sidebar Panel Toggles
+  const sidebarItems = document.querySelectorAll('.sidebar-menu .menu-item');
+  const panels = document.querySelectorAll('.dashboard-panel');
+  const panelTitle = document.getElementById('active-panel-title');
+
+  if (sidebarItems.length > 0) {
+    sidebarItems.forEach(item => {
+      item.addEventListener('click', () => {
+        // Toggle active menu item
+        sidebarItems.forEach(i => i.classList.remove('active'));
+        item.classList.add('active');
+
+        // Toggle active dashboard panel
+        const targetId = item.getAttribute('data-target');
+        panels.forEach(panel => {
+          panel.classList.remove('active');
+          if (panel.id === targetId) {
+            panel.classList.add('active');
+          }
+        });
+
+        // Update panel title header
+        const btnText = item.querySelector('button').textContent;
+        panelTitle.textContent = btnText.substring(2); // strip emoji
+      });
+    });
+  }
+
+  // Dashboard Filters & Mock Data Simulation
+  const filterShopee = document.getElementById('filter-shopee');
+  const filterLazada = document.getElementById('filter-lazada');
+  const filterTiktok = document.getElementById('filter-tiktok');
+  const rangeButtons = document.querySelectorAll('.toggle-buttons .toggle-btn');
+  
+  const valGMV = document.getElementById('val-gmv');
+  const valCommission = document.getElementById('val-commission');
+  const valPayout = document.getElementById('val-payout');
+
+  function updateDashboardMetricsSim() {
+    if (!valGMV) return;
+
+    let baseGMV = 245800.00;
+    
+    // Scale based on selected time range
+    const activeRange = document.querySelector('.toggle-buttons .toggle-btn.active')?.getAttribute('data-time') || 'monthly';
+    if (activeRange === 'daily') baseGMV /= 30.0;
+    if (activeRange === 'weekly') baseGMV /= 4.0;
+    if (activeRange === 'yearly') baseGMV *= 12.0;
+
+    // Deduct/adjust based on platform exclusions
+    let mult = 1.0;
+    if (filterShopee && !filterShopee.checked) mult -= 0.35;
+    if (filterLazada && !filterLazada.checked) mult -= 0.40;
+    if (filterTiktok && !filterTiktok.checked) mult -= 0.25;
+
+    const currentGMV = baseGMV * mult;
+    const currentComm = currentGMV * 0.075; // average 7.5% platform commission
+    const currentPayout = currentGMV - currentComm;
+
+    valGMV.textContent = '฿' + currentGMV.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    valCommission.textContent = '฿' + currentComm.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    valPayout.textContent = '฿' + currentPayout.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+  }
+
+  if (filterShopee) filterShopee.addEventListener('change', updateDashboardMetricsSim);
+  if (filterLazada) filterLazada.addEventListener('change', updateDashboardMetricsSim);
+  if (filterTiktok) filterTiktok.addEventListener('change', updateDashboardMetricsSim);
+
+  if (rangeButtons.length > 0) {
+    rangeButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        rangeButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        updateDashboardMetricsSim();
+      });
+    });
+  }
+
+  // Bulk print simulation (AWB, Invoice, Picklist)
+  const btnBulkPrint = document.getElementById('btn-bulk-print');
+  const printConsole = document.getElementById('print-log-box');
+
+  if (btnBulkPrint && printConsole) {
+    btnBulkPrint.addEventListener('click', () => {
+      printConsole.innerHTML = '';
+      btnBulkPrint.disabled = true;
+
+      const logLines = [
+        "[INFO] Initiating multi-channel document compiler...",
+        "[INFO] Connecting Shopee Open API (sh_th_99011) - Fetching 8 orders...",
+        "[INFO] Connecting Lazada Open Platform (lz_th_00284) - Fetching 6 orders...",
+        "[INFO] Connecting TikTok Shop API (tt_th_88102) - Fetching 4 orders...",
+        "[INFO] Found 18 total pending transactions. Pulling AWB payloads...",
+        "[PROCESS] Packing Air Waybills for Flash Express, J&T and Kerry...",
+        "[PROCESS] Compiling localized Invoices & Warehouse Picklists...",
+        "[PDF] Generating consolidated printable PDF document...",
+        "[SUCCESS] Compiled package complete! 18 AWBs, 18 Picklists, 18 Invoices written.",
+        "[SYSTEM] File transfer completed to default local printer port. Done."
+      ];
+
+      let delay = 0;
+      logLines.forEach(line => {
+        setTimeout(() => {
+          const item = document.createElement('div');
+          item.textContent = line;
+          printConsole.appendChild(item);
+          printConsole.scrollTop = printConsole.scrollHeight;
+          
+          if (line.includes('[SYSTEM]')) {
+            btnBulkPrint.disabled = false;
+          }
+        }, delay);
+        delay += 600;
+      });
+    });
+  }
+
+  // Low Inventory Configuration Alerts Modal
+  const btnTriggerAlert = document.getElementById('btn-trigger-alert-modal');
+  const alertModal = document.getElementById('alert-modal');
+  const alertClose = document.getElementById('alert-modal-close');
+  const alertForm = document.getElementById('alert-setup-form');
+
+  if (btnTriggerAlert && alertModal) {
+    btnTriggerAlert.addEventListener('click', () => {
+      alertModal.classList.add('active');
+    });
+  }
+
+  if (alertClose) {
+    alertClose.addEventListener('click', () => {
+      alertModal.classList.remove('active');
+    });
+  }
+
+  if (alertForm) {
+    alertForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const thresholdVal = document.getElementById('alert-threshold-input').value;
+      alert(`Stock warnings activated! Alerts will trigger when any Master SKU dips below ${thresholdVal} items.`);
+      alertModal.classList.remove('active');
+    });
+  }
+
+  // Batch listing form publish
+  const batchForm = document.getElementById('batch-upload-form');
+  if (batchForm) {
+    batchForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Product created locally!\nSynchronizing and publishing listing to Shopee, Lazada, and TikTok Shop Thailand...');
+      batchForm.reset();
+    });
+  }
+
+  // Strategic pricing calculator calculations
+  const sliderCost = document.getElementById('slider-cost');
+  const sliderComm = document.getElementById('slider-comm');
+  const sliderShipping = document.getElementById('slider-shipping');
+  
+  const labelCost = document.getElementById('label-cost-val');
+  const labelComm = document.getElementById('label-comm-val');
+  const labelShipping = document.getElementById('label-shipping-val');
+  
+  const suggestPriceEl = document.getElementById('calc-suggested-price');
+  const profitPctEl = document.getElementById('calc-profit-pct');
+
+  function calculateTargetPricing() {
+    if (!sliderCost) return;
+
+    const baseCost = parseFloat(sliderCost.value);
+    const commRate = parseFloat(sliderComm.value) / 100;
+    const shippingCost = parseFloat(sliderShipping.value);
+
+    // Update labels text
+    labelCost.textContent = '฿' + baseCost.toFixed(2);
+    labelComm.textContent = sliderComm.value + '%';
+    labelShipping.textContent = '฿' + shippingCost.toFixed(2);
+
+    // Calculation formula: Target Price = (Base Cost + Shipping) / (1 - Commission - Target Margin)
+    // Assume a solid default target margin of 35%
+    const targetMargin = 0.35;
+    const suggestedPrice = (baseCost + shippingCost) / (1 - commRate - targetMargin);
+
+    // Calculate margins percentage
+    const profitAmount = suggestedPrice - baseCost - (suggestedPrice * commRate) - shippingCost;
+    const profitPct = (profitAmount / suggestedPrice) * 100;
+
+    suggestPriceEl.textContent = '฿' + Math.max(suggestedPrice, 0).toFixed(2);
+    profitPctEl.textContent = Math.max(profitPct, 0).toFixed(1) + '%';
+  }
+
+  if (sliderCost) {
+    sliderCost.addEventListener('input', calculateTargetPricing);
+    sliderComm.addEventListener('input', calculateTargetPricing);
+    sliderShipping.addEventListener('input', calculateTargetPricing);
+    
+    // Initial run
+    calculateTargetPricing();
+  }
+
+
   // --- Helper Functions ---
 
   function resetRecoverySteps() {
-    smsStepRequest.style.display = 'block';
-    smsStepVerify.style.display = 'none';
-    smsStepReset.style.display = 'none';
-    document.getElementById('email-recovery-form').reset();
-    document.getElementById('sms-recovery-request-form').reset();
-    document.getElementById('sms-recovery-verify-form').reset();
-    document.getElementById('sms-recovery-reset-form').reset();
+    if (smsStepRequest) smsStepRequest.style.display = 'block';
+    if (smsStepVerify) smsStepVerify.style.display = 'none';
+    if (smsStepReset) smsStepReset.style.display = 'none';
+    
+    const ef = document.getElementById('email-recovery-form');
+    if (ef) ef.reset();
+    const rf = document.getElementById('sms-recovery-request-form');
+    if (rf) rf.reset();
+    const vf = document.getElementById('sms-recovery-verify-form');
+    if (vf) vf.reset();
+    const sf = document.getElementById('sms-recovery-reset-form');
+    if (sf) sf.reset();
   }
 
   function establishSuccessfulLogin(username, rememberMe) {
@@ -547,45 +744,11 @@ document.addEventListener('DOMContentLoaded', () => {
     triggerMFAChallenge();
   }
 
-  function triggerMFAChallenge() {
-    loginPanel.classList.remove('active');
-    mfaPanel.classList.add('active');
-    
-    const maskedPhone = identityInput.value.includes('@') ? 'email inbox' : 'mobile SMS (+66 XX-XXX-X78)';
-    alert(`Risk-based Adaptive Guard triggered. A 6-digit verification code was sent to your ${maskedPhone}. (Code: 8 8 2 0 4 9)`);
-    
-    startOtpCooldownTimer(60);
-    otpInputs[0].focus();
-  }
-
   function verifyOTPCode() {
     const enteredCode = Array.from(otpInputs).map(inp => inp.value).join('');
     if (enteredCode === '882049') {
       alert('2-Step Verification Completed Successfully!');
-      
-      const newSession = {
-        id: 'sess-' + (activeSessions.length + 1),
-        name: window.innerWidth <= 600 ? 'Mobile Webview (iOS)' : 'Browser session (Desktop)',
-        ip: '127.0.0.1',
-        loc: 'Bangkok, TH',
-        current: true
-      };
-      
-      activeSessions.forEach(sess => sess.current = false);
-      activeSessions.unshift(newSession);
-      renderDeviceConsole();
-
-      // Reset
-      loginForm.reset();
-      mfaForm.reset();
-      mfaPanel.classList.remove('active');
-      loginPanel.classList.add('active');
-      
-      const profileBadge = document.getElementById('social-profile-badge');
-      if (profileBadge) profileBadge.style.display = 'none';
-      socialSessionActive = false;
-
-      alert('Dashboard simulated login completed! Scroll down to review the device console.');
+      window.location.href = 'dashboard.html';
     } else {
       alert('Invalid verification code. Please try again.');
       otpInputs.forEach(inp => inp.value = '');
@@ -594,6 +757,7 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 
   function startOtpCooldownTimer(duration) {
+    if (!mfaTimerText) return;
     let timer = duration;
     resendOtpBtn.disabled = true;
     
@@ -619,7 +783,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-  // Render list of active sessions with revoking logic
   function renderDeviceConsole() {
     const listContainer = document.getElementById('active-device-list');
     if (!listContainer) return;

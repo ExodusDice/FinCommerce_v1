@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard | FinCommerce Multi-Channel Seller Portal</title>
+  
+  <link rel="stylesheet" href="styles.css">
+  
+  <!-- Add FontAwesome style or standard symbols inline -->
+  <style>
+    /* Dashboard specific layout structures */
+    .dashboard-layout {
+      display: flex;
+      width: 100%;
+      min-height: 90vh;
+      background: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--glass-border);
+      border-radius: 24px;
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+    
+    /* Sidebar Navigation */
+    .sidebar {
+      width: 250px;
+      background: rgba(3, 7, 18, 0.6);
+      border-right: 1px solid var(--glass-border);
+      padding: 2rem 1.25rem;
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+    }
+    
+    .sidebar-brand h2 {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(to right, #a5b4fc, #818cf8, #22d3ee);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    
+    .sidebar-menu {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      list-style: none;
+    }
+    
+    .menu-item button {
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      padding: 0.75rem 1rem;
+      text-align: left;
+      border-radius: 8px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      transition: var(--transition-smooth);
+    }
+    
+    .menu-item.active button, .menu-item button:hover {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--color-text-main);
+      box-shadow: inset 3px 0 0 var(--color-primary);
+    }
+    
+    .channel-status-box {
+      margin-top: auto;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+    }
+    
+    .channel-status-box h4 {
+      font-size: 0.8rem;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 0.5rem;
+    }
+    
+    .channel-indicator {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+    }
+    
+    .status-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--color-success);
+      box-shadow: 0 0 8px var(--color-success);
+    }
+    .status-dot.offline {
+      background: var(--color-error);
+      box-shadow: 0 0 8px var(--color-error);
+    }
+    
+    /* Content Panel */
+    .content-area {
+      flex: 1;
+      padding: 2.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.5rem;
+      overflow-y: auto;
+    }
+    
+    .content-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--glass-border);
+      padding-bottom: 1rem;
+    }
+    
+    .merchant-profile {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+    
+    .profile-pic {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--color-primary), var(--color-secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    
+    /* Dynamic Panels */
+    .dashboard-panel {
+      display: none;
+      animation: fadeIn 0.4s ease;
+    }
+    
+    .dashboard-panel.active {
+      display: block;
+    }
+    
+    /* Analytics Cards Grid */
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .metric-card {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    
+    .metric-card h4 {
+      color: var(--color-text-muted);
+      font-size: 0.85rem;
+      margin-bottom: 0.5rem;
+    }
+    
+    .metric-card .value {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--color-text-main);
+    }
+    
+    .metric-card .change {
+      font-size: 0.8rem;
+      margin-top: 0.25rem;
+    }
+    
+    .change.positive { color: var(--color-success); }
+    .change.negative { color: var(--color-error); }
+    
+    /* Toggle filter group */
+    .filter-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: rgba(0,0,0,0.2);
+      padding: 0.75rem 1.25rem;
+      border-radius: 12px;
+      margin-bottom: 1.5rem;
+      flex-wrap: wrap;
+      gap: 1rem;
+    }
+    
+    .toggle-buttons {
+      display: flex;
+      background: rgba(255,255,255,0.05);
+      border-radius: 8px;
+      padding: 0.2rem;
+    }
+    
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-muted);
+      padding: 0.4rem 1rem;
+      font-size: 0.85rem;
+      cursor: pointer;
+      border-radius: 6px;
+      font-family: inherit;
+      transition: var(--transition-smooth);
+    }
+    
+    .toggle-btn.active {
+      background: var(--color-primary);
+      color: #fff;
+    }
+    
+    .checkbox-group {
+      display: flex;
+      gap: 1.25rem;
+    }
+    
+    /* SVG Chart */
+    .chart-container {
+      background: rgba(255,255,255,0.02);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    
+    .chart-wrapper {
+      position: relative;
+      height: 200px;
+      width: 100%;
+    }
+    
+    /* Tables */
+    .data-table-container {
+      width: 100%;
+      overflow-x: auto;
+      background: rgba(0, 0, 0, 0.2);
+      border-radius: 12px;
+      border: 1px solid var(--glass-border);
+    }
+    
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.9rem;
+    }
+    
+    .data-table th {
+      background: rgba(99, 102, 241, 0.15);
+      color: var(--color-text-main);
+      padding: 0.85rem 1.25rem;
+      font-weight: 600;
+      border-bottom: 1px solid var(--glass-border);
+    }
+    
+    .data-table td {
+      padding: 0.85rem 1.25rem;
+      border-bottom: 1px solid rgba(255,255,255,0.03);
+      color: var(--color-text-muted);
+    }
+    
+    .data-table tr:hover td {
+      background: rgba(255,255,255,0.02);
+      color: var(--color-text-main);
+    }
+    
+    .table-mapping-box {
+      font-size: 0.75rem;
+      background: rgba(255,255,255,0.05);
+      padding: 0.25rem 0.5rem;
+      border-radius: 4px;
+      display: inline-block;
+      margin-right: 0.25rem;
+    }
+    
+    /* strategic pricing calculator */
+    .calculator-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+    
+    .slider-group {
+      margin-bottom: 1.5rem;
+    }
+    
+    .slider-header {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+    }
+    
+    .calc-slider {
+      width: 100%;
+      -webkit-appearance: none;
+      background: rgba(255,255,255,0.1);
+      height: 6px;
+      border-radius: 3px;
+      outline: none;
+    }
+    
+    .calc-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--color-secondary);
+      cursor: pointer;
+      box-shadow: 0 0 8px var(--color-secondary);
+      transition: var(--transition-smooth);
+    }
+    
+    .calc-result-box {
+      background: rgba(99, 102, 241, 0.08);
+      border: 1.5px dashed var(--color-primary);
+      border-radius: 16px;
+      padding: 2rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 1.5rem;
+    }
+    
+    /* Print fulfillment logs panel */
+    .print-console {
+      background: rgba(0,0,0,0.5);
+      border: 1px solid var(--glass-border);
+      border-radius: 12px;
+      padding: 1rem;
+      font-family: 'Courier New', Courier, monospace;
+      font-size: 0.8rem;
+      height: 120px;
+      overflow-y: auto;
+      color: #34d399; /* Green console */
+    }
+    
+    /* Alert Settings overlay dialog */
+    .alert-config-overlay {
+      position: fixed;
+      top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(3, 7, 18, 0.8);
+      backdrop-filter: blur(8px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+    }
+    .alert-config-overlay.active {
+      display: flex;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>FinCommerce</h1>
+    <p>Centralized Thailand E-Commerce Management Suite</p>
+  </header>
+
+  <!-- Main Container Layout -->
+  <main class="main-container" style="max-width: 1100px;">
+    
+    <div class="dashboard-layout">
+      
+      <!-- 1. Left Sidebar Navigation -->
+      <aside class="sidebar">
+        <div class="sidebar-brand">
+          <h2>FinCommerce</h2>
+        </div>
+        
+        <ul class="sidebar-menu">
+          <li class="menu-item active" data-target="panel-analytics">
+            <button>📊 Analytics Dashboard</button>
+          </li>
+          <li class="menu-item" data-target="panel-inventory">
+            <button>📦 Stock & SKU Mappings</button>
+          </li>
+          <li class="menu-item" data-target="panel-uploads">
+            <button>🚀 Batch Upload Listing</button>
+          </li>
+          <li class="menu-item" data-target="panel-connections">
+            <button>🔌 Channel Connections</button>
+          </li>
+          <li class="menu-item" data-target="panel-calculator">
+            <button>🧮 Strategic Calculator</button>
+          </li>
+        </ul>
+        
+        <!-- Live Store Sync Indicators -->
+        <div class="channel-status-box">
+          <h4>Channel Node Sync</h4>
+          <div class="channel-indicator">
+            <span>Shopee TH</span>
+            <span class="status-dot"></span>
+          </div>
+          <div class="channel-indicator">
+            <span>Lazada TH</span>
+            <span class="status-dot"></span>
+          </div>
+          <div class="channel-indicator">
+            <span>TikTok Shop TH</span>
+            <span class="status-dot"></span>
+          </div>
+        </div>
+      </aside>
+
+      <!-- 2. Main Content Panels -->
+      <section class="content-area">
+        
+        <!-- Top Navbar -->
+        <div class="content-header">
+          <div>
+            <h2 id="active-panel-title" style="font-size: 1.35rem; font-weight: 600;">Analytics Dashboard</h2>
+            <span style="font-size: 0.8rem; color: var(--color-text-muted);">Current tenant session status: Active</span>
+          </div>
+          
+          <div class="merchant-profile">
+            <div class="profile-pic">S</div>
+            <div style="text-align: right;">
+              <h4 style="font-size: 0.9rem;" id="nav-merchant-name">Somchai Prasert</h4>
+              <p style="font-size: 0.75rem; color: var(--color-text-muted);" id="nav-merchant-email">somchai@gmail.com</p>
+            </div>
+            <button class="revoke-btn" style="padding: 0.4rem 0.75rem;" onclick="location.href='index.html'">Sign Out</button>
+          </div>
+        </div>
+
+        <!-- Panel 1: Analytics & Reports (Default) -->
+        <div id="panel-analytics" class="dashboard-panel active">
+          
+          <!-- Filters (Daily/Weekly/Monthly + Platform exclusions) -->
+          <div class="filter-bar">
+            <div class="toggle-buttons">
+              <button class="toggle-btn" data-time="daily">Daily</button>
+              <button class="toggle-btn" data-time="weekly">Weekly</button>
+              <button class="toggle-btn active" data-time="monthly">Monthly</button>
+              <button class="toggle-btn" data-time="yearly">Yearly</button>
+            </div>
+            
+            <div class="checkbox-group">
+              <label class="checkbox-container" style="font-size: 0.85rem;">
+                <input type="checkbox" checked id="filter-shopee">
+                <span class="checkmark"></span>
+                Shopee
+              </label>
+              <label class="checkbox-container" style="font-size: 0.85rem;">
+                <input type="checkbox" checked id="filter-lazada">
+                <span class="checkmark"></span>
+                Lazada
+              </label>
+              <label class="checkbox-container" style="font-size: 0.85rem;">
+                <input type="checkbox" checked id="filter-tiktok">
+                <span class="checkmark"></span>
+                TikTok Shop
+              </label>
+            </div>
+          </div>
+
+          <!-- Payout Metrics Cards -->
+          <div class="metrics-grid">
+            <div class="metric-card">
+              <h4>Total Gross Sales (GMV)</h4>
+              <div class="value" id="val-gmv">฿245,800.00</div>
+              <div class="change positive">↑ +14.2% vs last month</div>
+            </div>
+            <div class="metric-card">
+              <h4>Avg Store Commissions Cut</h4>
+              <div class="value" id="val-commission">฿18,435.00</div>
+              <div class="change negative">↓ -5.5% platform adjustment</div>
+            </div>
+            <div class="metric-card">
+              <h4>Central Net Payouts Ledger</h4>
+              <div class="value" id="val-payout">฿227,365.00</div>
+              <div class="change positive">↑ +15.8% net profit margin</div>
+            </div>
+          </div>
+
+          <!-- Dynamic SVG Sales Chart -->
+          <div class="chart-container">
+            <h3 style="font-size: 1rem; font-weight: 600; margin-bottom: 1rem;">Sales Distribution Curve (Lazada vs Shopee vs TikTok)</h3>
+            <div class="chart-wrapper">
+              <!-- Custom Animated SVG Chart -->
+              <svg viewBox="0 0 500 150" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <!-- Grid Lines -->
+                <line x1="40" y1="20" x2="480" y2="20" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
+                <line x1="40" y1="70" x2="480" y2="70" stroke="rgba(255,255,255,0.05)" stroke-dasharray="4"/>
+                <line x1="40" y1="120" x2="480" y2="120" stroke="rgba(255,255,255,0.08)"/>
+                
+                <!-- Graph Lines -->
+                <path d="M40,110 Q120,70 200,90 T360,40 T480,30" fill="none" stroke="var(--color-primary)" stroke-width="3" stroke-linecap="round"/>
+                <path d="M40,120 Q120,100 200,60 T360,80 T480,50" fill="none" stroke="var(--color-secondary)" stroke-width="2.5" stroke-linecap="round" stroke-dasharray="2"/>
+                
+                <!-- Points overlay -->
+                <circle cx="200" cy="90" r="4" fill="var(--color-primary)"/>
+                <circle cx="360" cy="40" r="4" fill="var(--color-primary)"/>
+                <circle cx="200" cy="60" r="4" fill="var(--color-secondary)"/>
+              </svg>
+            </div>
+          </div>
+
+          <!-- Bulk Print AWB invoices queue panel (PP-10) -->
+          <div class="metrics-grid" style="grid-template-columns: 1fr 1.5fr;">
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: center; gap: 1rem;">
+              <h3 style="font-size: 1.05rem; font-weight: 600;">Bulk Printing Console</h3>
+              <p style="font-size: 0.8rem; color: var(--color-text-muted);">
+                Print Air Waybills (AWB), Picklists, and Invoices across all connected shops in one action.
+              </p>
+              <button class="btn btn-primary" id="btn-bulk-print">Print All Channel Documents</button>
+            </div>
+            
+            <div class="metric-card" style="padding: 1rem;">
+              <h4 style="margin-bottom: 0.5rem;">Fulfillment Progress Output</h4>
+              <div class="print-console" id="print-log-box">
+                [SYSTEM] Idle. Ready to receive print jobs...
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Panel 2: Inventory & Mapping -->
+        <div id="panel-inventory" class="dashboard-panel">
+          <div class="filter-bar" style="justify-content: space-between;">
+            <input type="text" class="form-input" style="max-width: 300px; padding: 0.5rem 1rem;" placeholder="Search SKU or Name...">
+            <button class="btn btn-primary" style="width: auto; padding: 0.5rem 1.25rem;" id="btn-trigger-alert-modal">
+              <span>🔔</span> Configure Alerts
+            </button>
+          </div>
+
+          <div class="data-table-container">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Master SKU</th>
+                  <th>Product Name</th>
+                  <th>Central Stock</th>
+                  <th>Linked Platform Nodes</th>
+                  <th>Thai Avg Selling Price</th>
+                  <th>Competitors (TH)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="font-weight:600; color: #fff;">FIN-T-RED</td>
+                  <td>Premium T-Shirt (Red)</td>
+                  <td>142 items</td>
+                  <td>
+                    <span class="table-mapping-box">Shopee (142)</span>
+                    <span class="table-mapping-box">Lazada (142)</span>
+                    <span class="table-mapping-box">TikTok (142)</span>
+                  </td>
+                  <td>฿299.00</td>
+                  <td style="color: var(--color-secondary);">14 Shops</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; color: #fff;">FIN-T-BLU</td>
+                  <td>Premium T-Shirt (Blue)</td>
+                  <td>85 items</td>
+                  <td>
+                    <span class="table-mapping-box">Shopee (85)</span>
+                    <span class="table-mapping-box">Lazada (85)</span>
+                  </td>
+                  <td>฿299.00</td>
+                  <td style="color: var(--color-secondary);">9 Shops</td>
+                </tr>
+                <tr>
+                  <td style="font-weight:600; color: #fff;">FIN-K-BLU</td>
+                  <td>Stainless Tumbler (Blue)</td>
+                  <td>12 items</td>
+                  <td>
+                    <span class="table-mapping-box" style="background: rgba(239, 68, 68, 0.1); color: var(--color-error);">Lazada (12)</span>
+                  </td>
+                  <td>฿450.00</td>
+                  <td style="color: var(--color-secondary);">22 Shops</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Panel 3: Batch Upload / Product Edit -->
+        <div id="panel-uploads" class="dashboard-panel">
+          <div class="metrics-grid" style="grid-template-columns: 1.5fr 1fr;">
+            
+            <!-- Upload form -->
+            <div class="metric-card">
+              <h3 style="font-size: 1.1rem; margin-bottom: 1.25rem;">Multi-Channel Listing Publisher</h3>
+              
+              <form id="batch-upload-form">
+                <div class="form-group">
+                  <label class="form-label">Product Title</label>
+                  <input type="text" class="form-input" placeholder="Enter centralized product title" required>
+                </div>
+                
+                <div class="metrics-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
+                  <div class="form-group">
+                    <label class="form-label">Master Price (THB)</label>
+                    <input type="number" class="form-input" placeholder="299" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label">Warehouse Stock</label>
+                    <input type="number" class="form-input" placeholder="100" required>
+                  </div>
+                </div>
+
+                <div class="form-group">
+                  <label class="form-label">Target Channels</label>
+                  <div class="checkbox-group" style="margin-top: 0.5rem;">
+                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                      <input type="checkbox" checked>
+                      <span class="checkmark"></span>
+                      Shopee TH
+                    </label>
+                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                      <input type="checkbox" checked>
+                      <span class="checkmark"></span>
+                      Lazada TH
+                    </label>
+                    <label class="checkbox-container" style="font-size: 0.85rem;">
+                      <input type="checkbox" checked>
+                      <span class="checkmark"></span>
+                      TikTok TH
+                    </label>
+                  </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Publish to Selected Platforms</button>
+              </form>
+            </div>
+
+            <!-- Upload specs -->
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+              <div>
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.5rem;">Bulk Excel CSV Upload</h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted);">
+                  Upload a standardized inventory worksheet catalog. System will auto-push corresponding listings.
+                </p>
+              </div>
+              
+              <!-- Drag and drop zone -->
+              <div style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 2rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.01);" onclick="alert('Simulated file explorer open...')">
+                <span style="font-size: 2rem;">📤</span>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-muted);">Drag and drop inventory template here</p>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Panel 4: Store Connections -->
+        <div id="panel-connections" class="dashboard-panel">
+          <div class="metrics-grid">
+            
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="color:#fff; font-size:1rem; font-weight:600;">Shopee Thailand</h4>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: sh_th_99011 • Connected</p>
+              </div>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to Shopee Open Partner Oauth gateway...')">Re-auth Store</button>
+            </div>
+
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="color:#fff; font-size:1rem; font-weight:600;">Lazada Thailand</h4>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: lz_th_00284 • Connected</p>
+              </div>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to Lazada Open Platform Oauth gateway...')">Re-auth Store</button>
+            </div>
+
+            <div class="metric-card" style="display: flex; justify-content: space-between; align-items: center;">
+              <div>
+                <h4 style="color:#fff; font-size:1rem; font-weight:600;">TikTok Shop Thailand</h4>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted);">Store ID: tt_th_88102 • Connected</p>
+              </div>
+              <button class="btn btn-secondary" style="width:auto; padding: 0.4rem 1rem;" onclick="alert('Redirecting to TikTok Service Oauth gateway...')">Re-auth Store</button>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Panel 5: Strategic pricing calculator -->
+        <div id="panel-calculator" class="dashboard-panel">
+          <div class="calculator-grid">
+            
+            <div class="metric-card">
+              <h3 style="font-size: 1.1rem; margin-bottom: 1.5rem;">Target pricing simulator</h3>
+              
+              <!-- Cost Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Product Base Cost Price</span>
+                  <span id="label-cost-val" style="font-weight: 600; color: #fff;">฿150.00</span>
+                </div>
+                <input type="range" class="calc-slider" id="slider-cost" min="10" max="1000" value="150">
+              </div>
+
+              <!-- Commission Rate Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Target Platform Commissions/Fees Rate</span>
+                  <span id="label-comm-val" style="font-weight: 600; color: #fff;">8%</span>
+                </div>
+                <input type="range" class="calc-slider" id="slider-comm" min="2" max="25" value="8">
+              </div>
+
+              <!-- Shipping Subsidy Slider -->
+              <div class="slider-group">
+                <div class="slider-header">
+                  <span>Thailand Regional Shipping Subsidies</span>
+                  <span id="label-shipping-val" style="font-weight: 600; color: #fff;">฿40.00</span>
+                </div>
+                <input type="range" class="calc-slider" id="slider-shipping" min="0" max="100" value="40">
+              </div>
+            </div>
+
+            <!-- Calculation Output -->
+            <div class="calc-result-box">
+              <h4 style="color: var(--color-text-muted); font-size: 0.9rem; text-transform: uppercase;">Optimized Price Recommendation</h4>
+              
+              <div style="text-align: center;">
+                <div style="font-size: 2.5rem; font-weight: 700; color: var(--color-secondary);" id="calc-suggested-price">฿245.00</div>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.25rem;">Estimated Retail Price Target</p>
+              </div>
+
+              <div class="metrics-grid" style="width: 100%; text-align: center; margin-bottom: 0;">
+                <div>
+                  <h5 style="color: var(--color-text-muted); font-size: 0.75rem;">Estimated Net Margin</h5>
+                  <span style="font-weight: 600; color: var(--color-success); font-size: 1.1rem;" id="calc-profit-pct">38.7%</span>
+                </div>
+                <div>
+                  <h5 style="color: var(--color-text-muted); font-size: 0.75rem;">Competitor Median Price</h5>
+                  <span style="font-weight: 600; color: var(--color-warning); font-size: 1.1rem;">฿299.00</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </section>
+      
+    </div>
+
+  </main>
+
+  <!-- Low Inventory alert configuration overlay modal -->
+  <div class="alert-config-overlay" id="alert-modal">
+    <div class="modal-content">
+      <button class="modal-close-btn" id="alert-modal-close">&times;</button>
+      <h3 style="font-size: 1.25rem; margin-bottom: 1rem;">Stock Alerts Manager</h3>
+      <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1.25rem;">
+        Establish lower-limit threshold counts. We will flag notifications when stocks dip below these counts.
+      </p>
+
+      <form id="alert-setup-form">
+        <div class="form-group">
+          <label class="form-label">Warning Threshold Count</label>
+          <input type="number" id="alert-threshold-input" class="form-input" value="15" min="1" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Notification Channels</label>
+          <div class="checkbox-group" style="margin-top: 0.5rem;">
+            <label class="checkbox-container" style="font-size: 0.85rem;">
+              <input type="checkbox" checked>
+              <span class="checkmark"></span>
+              Browser Banner
+            </label>
+            <label class="checkbox-container" style="font-size: 0.85rem;">
+              <input type="checkbox" checked>
+              <span class="checkmark"></span>
+              Mobile Push Notify
+            </label>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Save Settings</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
