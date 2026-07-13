@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Register an account on FinCommerce to connect your Shopee, Lazada, and TikTok shop fronts in Thailand. Manage inventory and pricing from a single dashboard.">
+  <title>Register | FinCommerce - Multi-Channel Thailand E-Commerce Merchant SaaS</title>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>FinCommerce</h1>
+    <p>Thailand Multi-Channel E-Commerce Integration Suite</p>
+  </header>
+
+  <!-- Main Register Container -->
+  <main class="main-container">
+    
+    <!-- Registration Card -->
+    <section class="glass-card" id="register-card">
+      <h2 class="card-title">Create Merchant Account</h2>
+      
+      <form id="register-form">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="fullname" class="form-label">Full Name</label>
+          <div class="input-wrapper">
+            <input type="text" id="fullname" class="form-input" placeholder="Somchai Prasert" required>
+          </div>
+        </div>
+
+        <!-- Email Address -->
+        <div class="form-group">
+          <label for="reg-email" class="form-label">Email Address</label>
+          <div class="input-wrapper">
+            <input type="email" id="reg-email" class="form-input" placeholder="somchai@gmail.com" required>
+          </div>
+        </div>
+
+        <!-- Thailand Mobile Number -->
+        <div class="form-group">
+          <label for="reg-phone" class="form-label">Mobile Number</label>
+          <div class="input-wrapper">
+            <input type="tel" id="reg-phone" class="form-input" placeholder="08XXXXXXXX" required>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--color-text-muted); display: block; margin-top: 0.25rem;">
+            Tip: Prioritizing mobile registration is crucial for high regional user conversions.
+          </span>
+        </div>
+
+        <!-- Password -->
+        <div class="form-group">
+          <label for="reg-password" class="form-label">Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="reg-password" class="form-input" placeholder="••••••••" required>
+          </div>
+          <!-- Strength feedback and audit feedback -->
+          <span id="pwd-strength-msg" class="feedback-msg"></span>
+          <span id="pwd-leak-msg" class="feedback-msg"></span>
+        </div>
+
+        <!-- Confirm Password -->
+        <div class="form-group">
+          <label for="reg-password-confirm" class="form-label">Confirm Password</label>
+          <div class="input-wrapper">
+            <input type="password" id="reg-password-confirm" class="form-input" placeholder="••••••••" required>
+          </div>
+        </div>
+
+        <!-- Terms and Conditions checkbox -->
+        <div class="form-footer" style="justify-content: flex-start;">
+          <label class="checkbox-container">
+            <input type="checkbox" required>
+            <span class="checkmark"></span>
+            I agree to the Terms of Service & Privacy Policy
+          </label>
+        </div>
+
+        <!-- Register Action -->
+        <button type="submit" id="reg-btn" class="btn btn-primary">Create Account</button>
+      </form>
+
+      <p style="text-align: center; font-size: 0.9rem; color: var(--color-text-muted); margin-top: 1.5rem;">
+        Already registered? <a href="index.html" class="forgot-link">Sign In here</a>
+      </p>
+    </section>
+
+  </main>
+
+  <!-- Script Injection -->
+  <script src="app.js"></script>
+</body>
+</html>

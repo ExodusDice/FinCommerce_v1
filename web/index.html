@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Access the centralized merchant console for Lazada, Shopee, and TikTok Shop Thailand. Sync inventory, adjust pricing, and print invoices instantly.">
+  <title>Login | FinCommerce - Multi-Channel Thailand E-Commerce Merchant SaaS</title>
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Header Section -->
+  <header>
+    <h1>FinCommerce</h1>
+    <p>Thailand Multi-Channel E-Commerce Integration Suite</p>
+  </header>
+
+  <!-- Main Login & Dashboard Console Containers -->
+  <main class="main-container">
+    
+    <!-- Primary Authentication Card -->
+    <section class="glass-card" id="auth-card">
+      
+      <!-- Panel 1: Login Form -->
+      <div id="login-panel" class="view-panel active">
+        <h2 class="card-title">Sign In to Dashboard</h2>
+        
+        <form id="login-form">
+          
+          <!-- Identity Input (Email / Phone) -->
+          <div class="form-group">
+            <label for="identity" class="form-label">Email or Phone Number</label>
+            <div class="input-wrapper">
+              <input type="text" id="identity" class="form-input" placeholder="somchai@gmail.com or 08XXXXXXXX" required>
+            </div>
+            <span id="identity-error" class="feedback-msg"></span>
+          </div>
+
+          <!-- Password Input -->
+          <div class="form-group">
+            <label for="password" class="form-label">Password</label>
+            <div class="input-wrapper">
+              <input type="password" id="password" class="form-input" placeholder="••••••••" required>
+              <button type="button" id="password-toggle" class="input-icon-btn" title="Toggle password visibility">
+                <span id="password-toggle-icon">👁️</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Failed Attempt / Captcha Triggers -->
+          <div class="captcha-container" id="captcha-sec">
+            <span style="font-size: 0.8rem; color: var(--color-warning);">Verify security:</span>
+            <label class="checkbox-container" style="font-size: 0.85rem;">
+              <input type="checkbox" id="captcha-checkbox">
+              <span class="checkmark"></span>
+              I am not a robot
+            </label>
+          </div>
+
+          <!-- Remember Me & Forgot Password -->
+          <div class="form-footer">
+            <label class="checkbox-container">
+              <input type="checkbox" id="remember-me">
+              <span class="checkmark"></span>
+              Remember Me
+            </label>
+            <a href="#" class="forgot-link" id="btn-forgot" onclick="alert('Forgot Username/Password Flow:\nSelf-service recovery will verify your registration details, then dispatch an activation link to your email or an SMS verification code.')">Forgot Password?</a>
+          </div>
+
+          <!-- Sign In Actions -->
+          <button type="submit" id="login-btn" class="btn btn-primary">Sign In</button>
+          
+          <button type="button" id="biometric-btn" class="btn btn-secondary">
+            <span>🛡️</span> Sign In with Biometrics
+          </button>
+        </form>
+
+        <div class="divider">Or Connect With</div>
+
+        <!-- Social Sign Ins (Desktop & Mobile optimized) -->
+        <div class="social-grid extended">
+          <button type="button" class="social-btn google" onclick="alert('Redirecting to Google Sign-In secure gateway...')" title="Login with Google">G</button>
+          <button type="button" class="social-btn facebook" onclick="alert('Redirecting to Facebook OAuth secure gateway...')" title="Login with Facebook">F</button>
+          <button type="button" class="social-btn tiktok" onclick="alert('Redirecting to TikTok Partner secure gateway...')" title="Login with TikTok">T</button>
+          <button type="button" class="social-btn line" onclick="alert('Redirecting to LINE Login API...')" title="Login with LINE">L</button>
+          <button type="button" class="social-btn apple" onclick="alert('Redirecting to Sign In with Apple authorization...')" title="Login with Apple">A</button>
+        </div>
+
+        <p style="text-align: center; font-size: 0.9rem; color: var(--color-text-muted);">
+          New merchant? <a href="register.html" class="forgot-link">Create an Account</a>
+        </p>
+      </div>
+
+      <!-- Panel 2: Two-Step Verification View (Triggered dynamically) -->
+      <div id="mfa-panel" class="view-panel">
+        <h2 class="card-title">2-Step Verification</h2>
+        <p style="text-align: center; font-size: 0.85rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+          Enter the 6-digit verification code sent to your device.
+        </p>
+
+        <form id="mfa-form">
+          <div class="otp-container">
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+            <input type="text" maxlength="1" class="otp-input" pattern="[0-9]" inputmode="numeric" required>
+          </div>
+
+          <div style="text-align: center; margin-bottom: 1.5rem; font-size: 0.9rem;">
+            <span id="mfa-timer" style="color: var(--color-secondary); font-weight: 500;">01:00</span>
+          </div>
+
+          <button type="button" id="resend-otp" class="btn btn-secondary" style="margin-bottom: 0.5rem;" disabled>Resend Code</button>
+          <button type="button" class="btn btn-primary" onclick="alert('Verification code bypass logic:\nPlease complete all 6 inputs to automatically verify.')">Verify Code</button>
+        </form>
+      </div>
+
+    </section>
+
+    <!-- Smart Device Management Console Card -->
+    <section class="device-manager-card" id="device-console">
+      <h3 style="font-size: 1.15rem; font-weight: 600; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.75rem;">
+        Smart Device Management
+      </h3>
+      <p style="font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.5rem;">
+        Review and manage devices authorized to access your FinCommerce portal. Revoking a session signs that device out instantly.
+      </p>
+
+      <!-- Active sessions rendering node -->
+      <div class="device-list" id="active-device-list">
+        <!-- Javascript renders sessions here -->
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Script Injection -->
+  <script src="app.js"></script>
+</body>
+</html>
