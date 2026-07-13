@@ -189,7 +189,8 @@ if __name__ == "__main__":
         ("Sequential_Diagram.md", "Sequential_Diagram.docx"),
         ("API_Specs.md", "API_Specs.docx"),
         ("Performance_Test_Plan.md", "Performance_Test_Plan.docx"),
-        ("Compatibility_Test_Plan.md", "Compatibility_Test_Plan.docx")
+        ("Compatibility_Test_Plan.md", "Compatibility_Test_Plan.docx"),
+        ("Project_Timeline.md", "Project_Timeline.docx")
     ]
     for md_file, docx_file in files_to_convert:
         md_p = os.path.join(docs_dir, md_file)
