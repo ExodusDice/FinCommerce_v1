@@ -593,42 +593,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Bulk print simulation (AWB, Invoice, Picklist)
+  // Bulk print shortcut button redirects to Order Management Tab
   const btnBulkPrint = document.getElementById('btn-bulk-print');
-  const printConsole = document.getElementById('print-log-box');
-
-  if (btnBulkPrint && printConsole) {
+  if (btnBulkPrint) {
     btnBulkPrint.addEventListener('click', () => {
-      printConsole.innerHTML = '';
-      btnBulkPrint.disabled = true;
+      // Find and click the Order Management tab in the sidebar
+      const orderMenuItem = Array.from(sidebarItems).find(i => i.getAttribute('data-target') === 'panel-orders');
+      if (orderMenuItem) {
+        orderMenuItem.click();
+      }
 
-      const logLines = [
-        "[INFO] Initiating multi-channel document compiler...",
-        "[INFO] Connecting Shopee Open API (sh_th_99011) - Fetching 8 orders...",
-        "[INFO] Connecting Lazada Open Platform (lz_th_00284) - Fetching 6 orders...",
-        "[INFO] Connecting TikTok Shop API (tt_th_88102) - Fetching 4 orders...",
-        "[INFO] Found 18 total pending transactions. Pulling AWB payloads...",
-        "[PROCESS] Packing Air Waybills for Flash Express, J&T and Kerry...",
-        "[PROCESS] Compiling localized Invoices & Warehouse Picklists...",
-        "[PDF] Generating consolidated printable PDF document...",
-        "[SUCCESS] Compiled package complete! 18 AWBs, 18 Picklists, 18 Invoices written.",
-        "[SYSTEM] File transfer completed to default local printer port. Done."
-      ];
-
-      let delay = 0;
-      logLines.forEach(line => {
-        setTimeout(() => {
-          const item = document.createElement('div');
-          item.textContent = line;
-          printConsole.appendChild(item);
-          printConsole.scrollTop = printConsole.scrollHeight;
-          
-          if (line.includes('[SYSTEM]')) {
-            btnBulkPrint.disabled = false;
-          }
-        }, delay);
-        delay += 600;
+      // Auto-select all new and ready orders
+      ordersList.forEach(o => {
+        if (o.status === 'New Order' || o.status === 'Ready to Ship') {
+          o.selected = true;
+        }
       });
+      renderOrdersTable();
+
+      // Trigger the AWB print log spooler
+      setTimeout(() => {
+        printDocuments('AWB');
+      }, 300);
     });
   }
 
