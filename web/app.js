@@ -659,14 +659,327 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  // Batch listing form publish
-  const batchForm = document.getElementById('batch-upload-form');
-  if (batchForm) {
-    batchForm.addEventListener('submit', (e) => {
-      e.preventDefault();
-      alert('Product created locally!\nSynchronizing and publishing listing to Shopee, Lazada, and TikTok Shop Thailand...');
-      batchForm.reset();
+  // ==========================================
+  // SECTION 3: INVENTORY MOCK DATA & CRUD OPERATIONS
+  // ==========================================
+  
+  let inventoryItems = [
+    { sku: 'FIN-T-RED', name: 'Premium T-Shirt (Red)', stock: 142, price: 299, competitors: 14, shopee: true, lazada: true, tiktok: true },
+    { sku: 'FIN-T-BLU', name: 'Premium T-Shirt (Blue)', stock: 85, price: 299, competitors: 9, shopee: true, lazada: true, tiktok: false },
+    { sku: 'FIN-K-BLU', name: 'Stainless Tumbler (Blue)', stock: 12, price: 450, competitors: 22, shopee: false, lazada: true, tiktok: false }
+  ];
+
+  const tableBody = document.getElementById('inventory-table-body');
+  const searchInput = document.getElementById('inventory-search');
+
+  // Modals for CRUD
+  const addModal = document.getElementById('add-product-modal');
+  const editModal = document.getElementById('edit-product-modal');
+  const deleteModal = document.getElementById('delete-product-modal');
+
+  const btnAddProduct = document.getElementById('btn-add-product');
+
+  // Close triggers
+  document.getElementById('add-product-close')?.addEventListener('click', () => addModal.classList.remove('active'));
+  document.getElementById('edit-product-close')?.addEventListener('click', () => editModal.classList.remove('active'));
+  document.getElementById('delete-product-close')?.addEventListener('click', () => deleteModal.classList.remove('active'));
+
+  // Open Add modal
+  if (btnAddProduct) {
+    btnAddProduct.addEventListener('click', () => {
+      document.getElementById('add-product-form').reset();
+      addModal.classList.add('active');
     });
+  }
+
+  // Render Inventory Table
+  function renderInventoryTable(itemsToRender = inventoryItems) {
+    if (!tableBody) return;
+    tableBody.innerHTML = '';
+
+    if (itemsToRender.length === 0) {
+      tableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding: 2rem; color: var(--color-text-muted);">No products found matching criteria.</td></tr>`;
+      return;
+    }
+
+    itemsToRender.forEach(item => {
+      const tr = document.createElement('tr');
+      
+      // Build Linked Channels Badges
+      let badges = '';
+      if (item.shopee) badges += `<span class="table-mapping-box">Shopee (${item.stock})</span>`;
+      if (item.lazada) badges += `<span class="table-mapping-box">Lazada (${item.stock})</span>`;
+      if (item.tiktok) badges += `<span class="table-mapping-box">TikTok (${item.stock})</span>`;
+      if (!item.shopee && !item.lazada && !item.tiktok) {
+        badges = `<span class="table-mapping-box" style="background: rgba(239, 68, 68, 0.1); color: var(--color-error); border-color: rgba(239,68,68,0.2);">Unmapped</span>`;
+      }
+
+      tr.innerHTML = `
+        <td style="font-weight:600; color: var(--color-text-main);">${item.sku}</td>
+        <td>${item.name}</td>
+        <td>${item.stock} items</td>
+        <td>${badges}</td>
+        <td>฿${item.price.toFixed(2)}</td>
+        <td style="color: var(--color-secondary);">${item.competitors} Shops</td>
+        <td style="text-align: center;">
+          <button class="btn btn-secondary btn-edit-row" data-sku="${item.sku}" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; width: auto; display: inline-block; margin-right: 0.25rem; margin-top:0;">✏️ Edit</button>
+          <button class="btn btn-secondary btn-delete-row" data-sku="${item.sku}" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; width: auto; display: inline-block; background: var(--color-error); color: #fff; border-color: var(--color-error); margin-top:0;">🗑️ Del</button>
+        </td>
+      `;
+
+      tableBody.appendChild(tr);
+    });
+
+    // Attach Row CRUD Triggers
+    document.querySelectorAll('.btn-edit-row').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sku = btn.getAttribute('data-sku');
+        const item = inventoryItems.find(i => i.sku === sku);
+        if (item) {
+          document.getElementById('edit-sku').value = item.sku;
+          document.getElementById('edit-name').value = item.name;
+          document.getElementById('edit-stock').value = item.stock;
+          document.getElementById('edit-price').value = item.price;
+          
+          document.getElementById('edit-sync-shopee').checked = item.shopee;
+          document.getElementById('edit-sync-lazada').checked = item.lazada;
+          document.getElementById('edit-sync-tiktok').checked = item.tiktok;
+
+          editModal.classList.add('active');
+        }
+      });
+    });
+
+    document.querySelectorAll('.btn-delete-row').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const sku = btn.getAttribute('data-sku');
+        const item = inventoryItems.find(i => i.sku === sku);
+        if (item) {
+          document.getElementById('delete-sku').value = item.sku;
+          document.getElementById('delete-warning-text').textContent = `Are you sure you want to delete the product "${item.name}" (SKU: ${item.sku})? This action will remove the record centrally.`;
+          
+          document.getElementById('delete-sync-shopee').checked = item.shopee;
+          document.getElementById('delete-sync-lazada').checked = item.lazada;
+          document.getElementById('delete-sync-tiktok').checked = item.tiktok;
+
+          deleteModal.classList.add('active');
+        }
+      });
+    });
+  }
+
+  // Initial table render
+  renderInventoryTable();
+
+  // Search Filter
+  if (searchInput) {
+    searchInput.addEventListener('input', () => {
+      const q = searchInput.value.toLowerCase().trim();
+      const filtered = inventoryItems.filter(item => 
+        item.sku.toLowerCase().includes(q) || 
+        item.name.toLowerCase().includes(q)
+      );
+      renderInventoryTable(filtered);
+    });
+  }
+
+  // Create Product Form Submit
+  const addForm = document.getElementById('add-product-form');
+  if (addForm) {
+    addForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sku = document.getElementById('add-sku').value.trim().toUpperCase();
+      const name = document.getElementById('add-name').value.trim();
+      const stock = parseInt(document.getElementById('add-stock').value);
+      const price = parseFloat(document.getElementById('add-price').value);
+
+      const shopee = document.getElementById('add-sync-shopee').checked;
+      const lazada = document.getElementById('add-sync-lazada').checked;
+      const tiktok = document.getElementById('add-sync-tiktok').checked;
+
+      // Duplicate Check
+      if (inventoryItems.some(i => i.sku === sku)) {
+        alert('Error: SKU already exists in inventory.');
+        return;
+      }
+
+      const newItem = { sku, name, stock, price, competitors: 0, shopee, lazada, tiktok };
+      inventoryItems.unshift(newItem); // Add to beginning of catalog list
+      renderInventoryTable();
+
+      let channels = [];
+      if (shopee) channels.push("Shopee TH");
+      if (lazada) channels.push("Lazada TH");
+      if (tiktok) channels.push("TikTok TH");
+
+      alert(`Success: Created Master SKU "${name}" [${sku}].\nSynchronized listing creation to: ${channels.join(', ') || 'No platforms (Saved Locally)'}`);
+      addModal.classList.remove('active');
+    });
+  }
+
+  // Edit Product Form Submit
+  const editForm = document.getElementById('edit-product-form');
+  if (editForm) {
+    editForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sku = document.getElementById('edit-sku').value;
+      const name = document.getElementById('edit-name').value.trim();
+      const stock = parseInt(document.getElementById('edit-stock').value);
+      const price = parseFloat(document.getElementById('edit-price').value);
+
+      const shopee = document.getElementById('edit-sync-shopee').checked;
+      const lazada = document.getElementById('edit-sync-lazada').checked;
+      const tiktok = document.getElementById('edit-sync-tiktok').checked;
+
+      const idx = inventoryItems.findIndex(i => i.sku === sku);
+      if (idx !== -1) {
+        inventoryItems[idx].name = name;
+        inventoryItems[idx].stock = stock;
+        inventoryItems[idx].price = price;
+        inventoryItems[idx].shopee = shopee;
+        inventoryItems[idx].lazada = lazada;
+        inventoryItems[idx].tiktok = tiktok;
+        
+        renderInventoryTable();
+
+        let channels = [];
+        if (shopee) channels.push("Shopee TH");
+        if (lazada) channels.push("Lazada TH");
+        if (tiktok) channels.push("TikTok TH");
+
+        alert(`Success: Updated SKU ${sku}.\nSync requests dispatched to: ${channels.join(', ') || 'None'}`);
+        editModal.classList.remove('active');
+      }
+    });
+  }
+
+  // Delete Product Form Submit
+  const deleteForm = document.getElementById('delete-product-form');
+  if (deleteForm) {
+    deleteForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const sku = document.getElementById('delete-sku').value;
+
+      const shopee = document.getElementById('delete-sync-shopee').checked;
+      const lazada = document.getElementById('delete-sync-lazada').checked;
+      const tiktok = document.getElementById('delete-sync-tiktok').checked;
+
+      inventoryItems = inventoryItems.filter(i => i.sku !== sku);
+      renderInventoryTable();
+
+      let channels = [];
+      if (shopee) channels.push("Shopee TH");
+      if (lazada) channels.push("Lazada TH");
+      if (tiktok) channels.push("TikTok TH");
+
+      alert(`Success: Removed central SKU ${sku}.\nListing deletion API calls executed on: ${channels.join(', ') || 'None'}`);
+      deleteModal.classList.remove('active');
+    });
+  }
+
+  // Single Listing Publisher Form Submit (Automatic redirect to Inventory screen)
+  const batchUploadForm = document.getElementById('batch-upload-form');
+  if (batchUploadForm) {
+    batchUploadForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const title = document.getElementById('single-pub-title').value.trim();
+      const price = parseFloat(document.getElementById('single-pub-price').value);
+      const stock = parseInt(document.getElementById('single-pub-stock').value);
+      
+      const shopee = document.getElementById('pub-shopee').checked;
+      const lazada = document.getElementById('pub-lazada').checked;
+      const tiktok = document.getElementById('pub-tiktok').checked;
+
+      const mockSKU = `FIN-PUB-${Math.floor(100 + Math.random() * 900)}`;
+
+      const newItem = { sku: mockSKU, name: title, stock, price, competitors: 0, shopee, lazada, tiktok };
+      inventoryItems.unshift(newItem);
+      renderInventoryTable();
+
+      let platforms = [];
+      if (shopee) platforms.push("Shopee TH");
+      if (lazada) platforms.push("Lazada TH");
+      if (tiktok) platforms.push("TikTok TH");
+
+      alert(`Success: Single Listing published successfully!\nCreated SKU: ${mockSKU}.\nSynchronized live listings to: ${platforms.join(', ') || 'None'}.\nRedirecting you to the Inventory Catalog page.`);
+      batchUploadForm.reset();
+
+      // Auto-transition UI tab to Inventory Mapping panel
+      const tabItem = document.querySelector('.sidebar-menu [data-target="panel-inventory"]');
+      if (tabItem) {
+        tabItem.click();
+      }
+    });
+  }
+
+  // Excel Template drag-drop upload simulator (Automatic redirect to Inventory screen)
+  const excelFileInput = document.getElementById('excel-file-input');
+  const excelDropZone = document.getElementById('excel-drop-zone');
+  const excelDropText = document.getElementById('excel-drop-text');
+
+  if (excelFileInput && excelDropZone) {
+    excelFileInput.addEventListener('change', handleExcelUploadSimulation);
+    
+    excelDropZone.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      excelDropZone.style.borderColor = 'var(--color-primary)';
+      excelDropZone.style.background = 'rgba(79, 70, 229, 0.05)';
+    });
+
+    excelDropZone.addEventListener('dragleave', () => {
+      excelDropZone.style.borderColor = 'var(--glass-border)';
+      excelDropZone.style.background = 'rgba(255,255,255,0.01)';
+    });
+
+    excelDropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      excelDropZone.style.borderColor = 'var(--glass-border)';
+      excelDropZone.style.background = 'rgba(255,255,255,0.01)';
+      
+      const files = e.dataTransfer.files;
+      if (files.length > 0) {
+        excelFileInput.files = files;
+        handleExcelUploadSimulation();
+      }
+    });
+  }
+
+  function handleExcelUploadSimulation() {
+    if (!excelDropText) return;
+    
+    const file = excelFileInput.files[0];
+    if (!file) return;
+
+    excelDropText.innerHTML = `<strong>Uploading:</strong> ${file.name}<br><span style="font-size:0.7rem; color:var(--color-primary);">Executing batch synchronization jobs...</span>`;
+
+    setTimeout(() => {
+      const shopee = document.getElementById('batch-shopee').checked;
+      const lazada = document.getElementById('batch-lazada').checked;
+      const tiktok = document.getElementById('batch-tiktok').checked;
+
+      // Inject mock spreadsheet row parses
+      const row1 = { sku: 'EXCEL-TSHIRT', name: 'Excel-Parsed Cotton T-Shirt', stock: 320, price: 180, competitors: 3, shopee, lazada, tiktok };
+      const row2 = { sku: 'EXCEL-HOODIE', name: 'Excel-Parsed Cozy Hoodie', stock: 75, price: 690, competitors: 7, shopee, lazada, tiktok };
+
+      inventoryItems.unshift(row1, row2);
+      renderInventoryTable();
+
+      let platforms = [];
+      if (shopee) platforms.push("Shopee TH");
+      if (lazada) platforms.push("Lazada TH");
+      if (tiktok) platforms.push("TikTok TH");
+
+      alert(`Success: Parsed 2 inventory records from spreadsheet template!\nBatch jobs successfully registered on: ${platforms.join(', ') || 'No platforms (Saved Locally)'}.\nRedirecting you to the Inventory Catalog page.`);
+      excelDropText.textContent = "Click to choose Excel spreadsheet";
+      excelFileInput.value = '';
+
+      // Auto-transition UI tab to Inventory Mapping panel
+      const tabItem = document.querySelector('.sidebar-menu [data-target="panel-inventory"]');
+      if (tabItem) {
+        tabItem.click();
+      }
+    }, 1500);
   }
 
   // Strategic pricing calculator calculations
@@ -742,6 +1055,15 @@ document.addEventListener('DOMContentLoaded', () => {
       document.cookie = "fincomm_session=active_tenant_session; path=/";
     }
     triggerMFAChallenge();
+  }
+
+  function triggerMFAChallenge() {
+    if (loginPanel && mfaPanel) {
+      loginPanel.classList.remove('active');
+      mfaPanel.classList.add('active');
+      startOtpCooldownTimer(60);
+      alert('Security Verification Challenge required. Enter 6-digit OTP code.');
+    }
   }
 
   function verifyOTPCode() {

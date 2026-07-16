@@ -31,9 +31,9 @@ To publish hundreds of products at once, use our standardized Excel template.
 
 ### 3.1 Bulk Upload Steps
 1. Navigate to the **Batch Upload Listing** tab on the sidebar.
-2. Click the upload area under **Bulk Excel CSV Upload** to open your file manager.
-3. Select your completed Excel template spreadsheet (`.xlsx` or `.csv` format) and upload.
-4. The system will parse the rows, validate column schema constraints, create the Master SKUs, and push corresponding listings to Shopee, Lazada, and TikTok Shop.
+2. Under **Bulk Excel CSV Upload**, configure the **Sync Excel Rows To** platform checkboxes (Shopee TH, Lazada TH, TikTok TH). This determines which connected stores the batch products will be created on.
+3. Click the upload area or drag-and-drop your completed Excel template spreadsheet (`.xlsx`, `.xls`, or `.csv` format) in the dashed file block.
+4. The system will parse the rows, validate column schema constraints, create the Master SKUs, and push corresponding listings to selected channels.
 
 ### 3.2 Excel Upload Template Data Schema
 To ensure successful uploads, your spreadsheet must contain the following header columns:
@@ -48,3 +48,27 @@ To ensure successful uploads, your spreadsheet must contain the following header
 | **shopee_sku** | String | No | `SH-T-RED` | Shopee product listing SKU maps (maps Shopee stock). |
 | **lazada_sku** | String | No | `LZ-T-RED` | Lazada product listing SKU maps (maps Lazada stock). |
 | **tiktok_sku** | String | No | `TT-T-RED` | TikTok product listing SKU maps (maps TikTok stock). |
+
+---
+
+## 4. Managing Central Catalog (Create, Edit, Delete)
+For fine-grained inventory control, navigate to the **Stock & SKU Mappings** tab on the sidebar.
+
+### 4.1 Create (Add Master SKU)
+1. Click the **➕ Add Product** button above the inventory table.
+2. Fill in the Master SKU, Name, Stock, and base price.
+3. Check target platforms under **Sync Platforms** (Shopee, Lazada, TikTok).
+4. Click **Create Product**. The system adds the master record and registers linked listing endpoints.
+
+### 4.2 Edit (Update Master SKU)
+1. Click the **✏️ Edit** button in the actions column of the target product row.
+2. Modify name, central stock quantity, or base retail price.
+3. Select which platforms should receive the updates by checking/unchecking the **Push updates to** options.
+4. Click **Save Product** to execute platform sync tasks.
+
+### 4.3 Delete (Retract Master SKU)
+1. Click the **🗑️ Del** button in the actions column of the target product row.
+2. A deletion confirmation dialog will display.
+3. Check the platforms from which you wish to retract listings under **Also Delete Listing Listings On Platform Shops**.
+4. Click **Confirm Delete SKU**. The system removes the central catalog item and issues listing retraction calls to the selected platforms.
+
