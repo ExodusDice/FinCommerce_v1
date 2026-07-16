@@ -15,6 +15,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-FREE-03** | Auto-Sync Check | Force webhook stock changes on connected Shopee shop. | Multi-channel sync does not execute. Central inventory is updated but other channels remain manual. | Pending |
 | **TC-FREE-04** | Payout Delay Audit | Check expected payout dates display delay. | Free tier ledger reports payouts with a 48-hour batch synchronization delay. | Pending |
 | **TC-FREE-05** | Return Inspection Cap | Verify returns limit enforcement on Free accounts. | System limits quality inspection tasks to 5 items monthly, requiring manual inventory restocking. | Pending |
+| **TC-FREE-06** | Order Processing Cap | Verify order sync capacity on Free accounts. | System limits multi-channel order processing to 50 items monthly, blocking bulk print actions. | Pending |
 
 ---
 
@@ -29,6 +30,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-BASIC-03** | Semi-Auto Sync Check | Adjust inventory stock on dashboard. | Stock updates are dispatched to connected Shopee, Lazada, and TikTok shops (Semi-auto sync triggers successfully). | Pending |
 | **TC-BASIC-04** | Payout Delay Audit | Check expected payout dates display delay. | Basic tier ledger reports payouts updated twice daily (12-hour sync window). | Pending |
 | **TC-BASIC-05** | Return Inspection Cap | Verify returns limit enforcement on Basic accounts. | System allows up to 100 return verification tasks monthly, with automated catalog restock actions. | Pending |
+| **TC-BASIC-06** | Order Processing Cap | Verify order sync capacity on Basic accounts. | System allows up to 1,000 order syncs monthly, enabling spooled document print queues. | Pending |
 
 ---
 
@@ -43,6 +45,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-ADV-03** | Strategic Pricing Check| Slide pricing cost variables inside target pricing simulator. | Real-time margin percentages and suggested retail prices recalculate on keystroke without lag. | Pending |
 | **TC-ADV-04** | Payout Delay Audit | Check expected payout dates display delay. | Advance tier ledger reports real-time payout calculations instantly synced via platform API webhooks. | Pending |
 | **TC-ADV-05** | Return Inspection Cap | Verify returns limit enforcement on Advance accounts. | System supports unlimited returns, integrated automated chatbot dispute routing, and instant restock actions. | Pending |
+| **TC-ADV-06** | Order Processing Cap | Verify order sync capacity on Advance accounts. | System supports unlimited multi-channel order processing and real-time print spooling. | Pending |
 
 ---
 

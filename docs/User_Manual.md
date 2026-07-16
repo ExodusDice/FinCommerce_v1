@@ -146,6 +146,32 @@ Under the **Inbound Returns & Tasks** tab, you can track customer-initiated retu
   3. Click **Approve & Restock** to automatically increment the catalog stock quantity by +1, process the customer's refund, and mark the status as `Refund Processed`.
   4. Alternatively, click **Reject Claim** to set the status to `Rejected` and flag the package for buyer-dispute handling.
 
+---
+
+## 8. Order Management Console
+Navigate to the **Order Management** tab on the sidebar to process incoming customer orders, cancel orders, and print shipping documents.
+
+### 8.1 Processing Orders (Accept Order)
+1. In the orders table, new incoming orders are flagged as `New Order`.
+2. Click **Accept** in the action column next to a single order, or select multiple checkboxes and click **Accept Selected** at the top.
+3. The system triggers simulated API requests to the target platform (Shopee, Lazada, or TikTok Shop), logs the endpoint parameters, and updates the status to `Ready to Ship`.
+
+### 8.2 Mandatory Cancellation Follow-ups
+To cancel an order:
+1. Click **Cancel** next to any active order.
+2. The **Cancel Platform Order** modal will launch.
+3. Select a cancellation reason. The reasons are customized and mandatory based on the platform specifications:
+   * **Shopee**: Out of Stock, Customer Request, or Delivery Area Restriction.
+   * **Lazada**: Out of Stock, Sourcing Delay, or Pricing Error.
+   * **TikTok Shop**: Out of Stock, Courier Pick-up Failure, or Customer Address Error.
+4. Click **Confirm Cancellation** to dispatch the API cancellation sync call and mark the order as `Cancelled`.
+
+### 8.3 Document Printing (AWB, Invoice, Picklist)
+1. Select one or more order rows using the left-hand checkboxes.
+2. Click **Print AWB**, **Print Invoice**, or **Print Picklist** at the top.
+3. The **Thermal Printing Queue Logs** console will expand, displaying the real-time compilation files compiled from the Shopee/Lazada/TikTok document streaming APIs.
+
+
 
 
 

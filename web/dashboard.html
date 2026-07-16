@@ -396,6 +396,9 @@
           <li class="menu-item" data-target="panel-uploads">
             <button>🚀 Batch Upload Listing</button>
           </li>
+          <li class="menu-item" data-target="panel-orders">
+            <button>📦 Order Management</button>
+          </li>
           <li class="menu-item" data-target="panel-connections">
             <button>🔌 Channel Connections</button>
           </li>
@@ -775,6 +778,69 @@
             </div>
           </div>
 
+        <!-- Panel 10: Order Management Dashboard -->
+        <div id="panel-orders" class="dashboard-panel">
+          <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-main);">Order Management Dashboard</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Process multi-channel buyer orders. Accept bookings, cancel transactions, and print logistic packages.</p>
+          </div>
+
+          <!-- Multi-action Command Bar -->
+          <div class="metric-card" style="background: #ffffff; padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 250px;">
+                <input type="text" id="order-search" class="form-input" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; max-width: 250px;" placeholder="Search Order ID or Name...">
+                <select id="order-status-filter" class="form-input" style="max-width: 150px; padding: 0.45rem; font-size: 0.8rem;">
+                  <option value="ALL">All Statuses</option>
+                  <option value="New Order">New Order</option>
+                  <option value="Ready to Ship">Ready to Ship</option>
+                  <option value="Shipped">Shipped</option>
+                  <option value="Cancelled">Cancelled</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                <button type="button" id="btn-accept-selected" class="btn btn-primary" style="padding: 0.45rem 0.85rem; font-size: 0.75rem; margin: 0; width: auto;">Accept Selected</button>
+                <button type="button" id="btn-print-awb" class="btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.75rem; margin: 0; width: auto; border-color: var(--color-primary); color: var(--color-primary);">Print AWB</button>
+                <button type="button" id="btn-print-invoice" class="btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.75rem; margin: 0; width: auto; border-color: var(--color-secondary); color: var(--color-secondary);">Print Invoice</button>
+                <button type="button" id="btn-print-picklist" class="btn btn-secondary" style="padding: 0.45rem 0.85rem; font-size: 0.75rem; margin: 0; width: auto;">Print Picklist</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Document Printing Live Console Log Box -->
+          <div class="metric-card" style="background: #0f172a; color: #38bdf8; font-family: monospace; font-size: 0.75rem; padding: 1rem; border-radius: 12px; margin-bottom: 1rem; display: none;" id="order-print-console">
+            <div style="display: flex; justify-content: space-between; border-bottom: 1px solid #334155; padding-bottom: 0.35rem; margin-bottom: 0.5rem; color: #94a3b8;">
+              <span>Thermal Printing Queue Logs</span>
+              <button id="close-print-console" style="background: none; border: none; color: #ef4444; font-weight: bold; cursor: pointer; font-size: 0.95rem; line-height:1;">&times;</button>
+            </div>
+            <div id="order-print-log-lines" style="max-height: 120px; overflow-y: auto; display: flex; flex-direction: column; gap: 0.25rem;">
+              <!-- Compilation output rows injected by JS -->
+            </div>
+          </div>
+
+          <!-- Main Orders Grid Table -->
+          <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+            <div class="data-table-container" style="max-height: 250px; overflow-y: auto;">
+              <table class="data-table" style="font-size: 0.75rem;">
+                <thead>
+                  <tr>
+                    <th style="width: 30px; text-align: center;"><input type="checkbox" id="orders-select-all"></th>
+                    <th>Order ID</th>
+                    <th>Customer Name</th>
+                    <th>Channel</th>
+                    <th>Order Date</th>
+                    <th>Total Amount</th>
+                    <th>Payment Method</th>
+                    <th>Current Status</th>
+                    <th style="text-align: center;">Order Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="orders-table-body">
+                  <!-- Dynamic order rows populated by app.js -->
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
 
         <!-- Panel 4: Store Connections -->
@@ -1605,6 +1671,30 @@
         <div style="display: flex; gap: 0.5rem;">
           <button type="submit" id="btn-approve-return" class="btn btn-primary" style="flex:1; padding: 0.5rem; font-size: 0.8rem; margin: 0;">Approve & Restock</button>
           <button type="button" id="btn-reject-return" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; margin: 0; border-color: var(--color-error); color: var(--color-error);">Reject Claim</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Platform Specific Order Cancellation Modal -->
+  <div class="alert-config-overlay" id="cancel-order-modal" style="z-index: 3300;">
+    <div class="modal-content" style="max-width: 400px; padding: 1.5rem; background: #ffffff; border-radius: 16px; position: relative;">
+      <button class="modal-close-btn" id="cancel-order-close" style="top: 15px; right: 15px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 0.25rem;">Cancel Platform Order</h3>
+      <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1.25rem;">Target Order: <span id="cancel-modal-order-id" style="font-weight: 600; color: var(--color-error);">ORD-9901</span> (<span id="cancel-modal-platform" style="font-weight: 600;">Shopee</span>)</p>
+
+      <form id="cancel-order-reason-form">
+        <div class="form-group" style="margin-bottom: 1.25rem;">
+          <label class="form-label" style="font-size: 0.8rem; font-weight:600;">Select Cancellation Reason (Mandatory)</label>
+          <select id="cancel-reason-select" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" required>
+            <!-- Customized platform options injected by JS -->
+          </select>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem; justify-content: flex-end;">
+          <button type="button" id="btn-cancel-modal-close" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; margin: 0;">Back</button>
+          <button type="submit" class="btn" style="background: var(--color-error); color: #fff; padding: 0.5rem 1rem; font-size: 0.8rem; border: none; margin: 0;">Confirm Cancellation</button>
         </div>
       </form>
     </div>

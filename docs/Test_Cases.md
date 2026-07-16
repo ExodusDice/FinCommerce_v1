@@ -203,3 +203,36 @@ This document provides Cucumber-style BDD features designed to run with `behave`
     And clicks "Approve & Restock"
     Then the system updates the return status to "Refund Processed"
     And the inventory stock count of "FIN-HOODIE-BLK" increases by 1 unit
+
+---
+
+## Feature: Order Management & Printing Operations
+
+### Scenario: Accepting Outgoing Platform Order
+    Given the user is on the "Order Management" console tab
+    And sees order "ORD-2026-9901" with status "New Order"
+    When the user clicks "Accept" next to the order
+    Then the system dispatches "POST /api/v1/shopee/orders/accept" API sync call
+    And updates the order status to "Ready to Ship"
+
+### Scenario Outline: Mandatory Cancellation Reasons Customize by Platform
+    Given the user is on the "Order Management" console tab
+    And selects order "<order_id>" from platform "<platform>"
+    When the user clicks "Cancel" next to the order
+    Then the cancellation modal opens
+    And the mandatory reasons dropdown list shows option "<expected_reason_code>"
+
+    Examples:
+      | order_id      | platform | expected_reason_code       |
+      | ORD-2026-9901 | Shopee   | DELIVERY_LIMITATION        |
+      | ORD-2026-9902 | Lazada   | SOURCING_DELAY             |
+      | ORD-2026-9903 | TikTok   | COURIER_FAILURE            |
+
+### Scenario: Printing Spooled Air Waybills and Invoices
+    Given the user is on the "Order Management" console tab
+    And selects orders "ORD-2026-9901" and "ORD-2026-9902" using checkboxes
+    When the user clicks "Print AWB"
+    Then the "Thermal Printing Queue Logs" console expands
+    And logs API GET queries pulling PDF documents for both orders
+    And spools the printable documents to the local thermal docket queue
+

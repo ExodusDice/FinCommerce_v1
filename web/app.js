@@ -2107,4 +2107,308 @@ document.addEventListener('DOMContentLoaded', () => {
   // Initial renders
   renderShippingProgress();
   renderReturnsLedger();
+
+
+  // ==========================================
+  // SECTION 9: ORDER MANAGEMENT PORTAL
+  // ==========================================
+
+  let ordersList = [
+    { orderId: 'ORD-2026-9901', customerName: 'Somchai Prasert', platform: 'Shopee', orderDate: '2026-07-16 10:15', amount: 550.00, paymentMethod: 'PromptPay', status: 'New Order', selected: false },
+    { orderId: 'ORD-2026-9902', customerName: 'Anchalee S.', platform: 'Lazada', orderDate: '2026-07-16 11:30', amount: 1200.00, paymentMethod: 'Credit Card', status: 'New Order', selected: false },
+    { orderId: 'ORD-2026-9903', customerName: 'Suchart Suksamran', platform: 'TikTok', orderDate: '2026-07-16 12:45', amount: 450.00, paymentMethod: 'TrueMoney', status: 'New Order', selected: false },
+    { orderId: 'ORD-2026-9904', customerName: 'Phaisarn P.', platform: 'Shopee', orderDate: '2026-07-15 14:00', amount: 890.00, paymentMethod: 'PromptPay', status: 'Ready to Ship', selected: false },
+    { orderId: 'ORD-2026-9905', customerName: 'Nipon K.', platform: 'Lazada', orderDate: '2026-07-15 16:30', amount: 1500.00, paymentMethod: 'Credit Card', status: 'Shipped', selected: false },
+    { orderId: 'ORD-2026-9906', customerName: 'Vichai L.', platform: 'TikTok', orderDate: '2026-07-15 17:15', amount: 690.00, paymentMethod: 'PromptPay', status: 'Cancelled', selected: false }
+  ];
+
+  const platformCancelReasons = {
+    'Shopee': [
+      { code: 'OUT_OF_STOCK', text: 'Out of Stock (สินค้าหมด)' },
+      { code: 'CUSTOMER_REQUEST', text: 'Customer Request (ลูกค้าขอยกเลิก)' },
+      { code: 'DELIVERY_LIMITATION', text: 'Delivery Area Restriction (พื้นที่จัดส่งไม่รองรับ)' }
+    ],
+    'Lazada': [
+      { code: 'OUT_OF_STOCK', text: 'Out of Stock (สินค้าหมด)' },
+      { code: 'SOURCING_DELAY', text: 'Sourcing Delay (จัดส่งล่าช้า)' },
+      { code: 'PRICING_ERROR', text: 'Pricing Error (ราคาผิดพลาด)' }
+    ],
+    'TikTok': [
+      { code: 'OUT_OF_STOCK', text: 'Out of Stock (สินค้าหมด)' },
+      { code: 'COURIER_FAILURE', text: 'Courier Pick-up Failure (ขนส่งไม่เข้ารับ)' },
+      { code: 'ADDRESS_ERROR', text: 'Customer Address Error (ที่อยู่ลูกค้าไม่ถูกต้อง)' }
+    ]
+  };
+
+  const ordersTableBody = document.getElementById('orders-table-body');
+  const orderSearch = document.getElementById('order-search');
+  const orderStatusFilter = document.getElementById('order-status-filter');
+  const ordersSelectAll = document.getElementById('orders-select-all');
+
+  const orderPrintConsole = document.getElementById('order-print-console');
+  const orderPrintLogLines = document.getElementById('order-print-log-lines');
+  const closePrintConsole = document.getElementById('close-print-console');
+
+  const btnAcceptSelected = document.getElementById('btn-accept-selected');
+  const btnPrintAwb = document.getElementById('btn-print-awb');
+  const btnPrintInvoice = document.getElementById('btn-print-invoice');
+  const btnPrintPicklist = document.getElementById('btn-print-picklist');
+
+  const cancelOrderModal = document.getElementById('cancel-order-modal');
+  const cancelOrderClose = document.getElementById('cancel-order-close');
+  const btnCancelModalClose = document.getElementById('btn-cancel-modal-close');
+  const cancelOrderReasonForm = document.getElementById('cancel-order-reason-form');
+  const cancelReasonSelect = document.getElementById('cancel-reason-select');
+
+  let activeCancelOrderId = '';
+
+  function renderOrdersTable(items = ordersList) {
+    if (!ordersTableBody) return;
+    ordersTableBody.innerHTML = '';
+
+    if (items.length === 0) {
+      ordersTableBody.innerHTML = `<tr><td colspan="9" style="text-align:center; padding:1.5rem; color:var(--color-text-muted);">No orders found matching criteria.</td></tr>`;
+      return;
+    }
+
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      
+      let statusStyle = "background: rgba(59, 130, 246, 0.1); color: #3b82f6;";
+      if (item.status === 'Ready to Ship') statusStyle = "background: rgba(245, 158, 11, 0.1); color: var(--color-warning);";
+      else if (item.status === 'Shipped') statusStyle = "background: rgba(16, 185, 129, 0.1); color: var(--color-success);";
+      else if (item.status === 'Cancelled') statusStyle = "background: rgba(239, 68, 68, 0.1); color: var(--color-error);";
+
+      let actionButtons = '';
+      if (item.status === 'New Order') {
+        actionButtons = `
+          <button class="btn btn-primary" style="padding:0.2rem 0.4rem; font-size:0.65rem; margin:0;" onclick="acceptOrder('${item.orderId}')">Accept</button>
+          <button class="btn" style="padding:0.2rem 0.4rem; font-size:0.65rem; margin:0; background:var(--color-error); color:#fff; border:none;" onclick="cancelOrder('${item.orderId}')">Cancel</button>
+        `;
+      } else if (item.status === 'Ready to Ship') {
+        actionButtons = `
+          <button class="btn" style="padding:0.2rem 0.4rem; font-size:0.65rem; margin:0; background:var(--color-error); color:#fff; border:none;" onclick="cancelOrder('${item.orderId}')">Cancel</button>
+        `;
+      } else {
+        actionButtons = `<span style="font-size:0.65rem; color:var(--color-text-muted);">Processed</span>`;
+      }
+
+      tr.innerHTML = `
+        <td style="text-align:center;"><input type="checkbox" class="order-select-checkbox" data-id="${item.orderId}" ${item.selected ? 'checked' : ''}></td>
+        <td style="font-weight:600; color:var(--color-text-main);">${item.orderId}</td>
+        <td>${item.customerName}</td>
+        <td>${item.platform} TH</td>
+        <td>${item.orderDate}</td>
+        <td>฿${item.amount.toFixed(2)}</td>
+        <td>${item.paymentMethod}</td>
+        <td><span class="status-badge" style="${statusStyle} border-radius:6px; padding:0.2rem 0.4rem; font-weight:600; font-size:0.65rem;">${item.status}</span></td>
+        <td style="text-align:center; display:flex; gap:0.25rem; justify-content:center;">${actionButtons}</td>
+      `;
+
+      // Bind checkbox event inside loop
+      const chk = tr.querySelector('.order-select-checkbox');
+      if (chk) {
+        chk.addEventListener('change', () => {
+          item.selected = chk.checked;
+        });
+      }
+
+      ordersTableBody.appendChild(tr);
+    });
+  }
+
+  // Accept single order (syncs API)
+  window.acceptOrder = function(orderId) {
+    const order = ordersList.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    let apiPath = '';
+    let payload = {};
+    if (order.platform === 'Shopee') {
+      apiPath = 'POST /api/v1/shopee/orders/accept';
+      payload = { order_id: orderId, action: 'CONFIRM_SHIPPED' };
+    } else if (order.platform === 'Lazada') {
+      apiPath = 'POST /api/v1/lazada/orders/pack';
+      payload = { order_id: orderId, packaging_type: 'BOX_MEDIUM', carrier: 'LEL Express' };
+    } else {
+      apiPath = 'POST /api/v1/tiktok/orders/rts';
+      payload = { order_id: orderId, handover_method: 'PICKUP' };
+    }
+
+    // Sync API log mockup
+    alert(`[API Sync - ${order.platform} Open API]\nPath: ${apiPath}\nPayload: ${JSON.stringify(payload)}\n\nOrder accepted successfully and synced to platform!`);
+    
+    order.status = 'Ready to Ship';
+    filterOrders();
+  };
+
+  // Accept multiple selected orders
+  if (btnAcceptSelected) {
+    btnAcceptSelected.addEventListener('click', () => {
+      const selected = ordersList.filter(o => o.selected && o.status === 'New Order');
+      if (selected.length === 0) {
+        alert('Please select one or more "New Order" items using checkboxes.');
+        return;
+      }
+
+      let shopeeIds = selected.filter(o => o.platform === 'Shopee').map(o => o.orderId);
+      let lazadaIds = selected.filter(o => o.platform === 'Lazada').map(o => o.orderId);
+      let tiktokIds = selected.filter(o => o.platform === 'TikTok').map(o => o.orderId);
+
+      let logMessage = "Platform API Bulk Sync Complete:\n";
+      if (shopeeIds.length > 0) logMessage += `• Shopee API: POST /api/v1/shopee/orders/bulk-accept (${shopeeIds.length} orders synced)\n`;
+      if (lazadaIds.length > 0) logMessage += `• Lazada API: POST /api/v1/lazada/orders/bulk-pack (${lazadaIds.length} orders synced)\n`;
+      if (tiktokIds.length > 0) logMessage += `• TikTok API: POST /api/v1/tiktok/orders/bulk-rts (${tiktokIds.length} orders synced)\n`;
+
+      selected.forEach(o => {
+        o.status = 'Ready to Ship';
+        o.selected = false;
+      });
+
+      if (ordersSelectAll) ordersSelectAll.checked = false;
+      alert(logMessage);
+      filterOrders();
+    });
+  }
+
+  // Cancel order popup triggers
+  window.cancelOrder = function(orderId) {
+    const order = ordersList.find(o => o.orderId === orderId);
+    if (!order) return;
+
+    activeCancelOrderId = orderId;
+    document.getElementById('cancel-modal-order-id').textContent = orderId;
+    document.getElementById('cancel-modal-platform').textContent = order.platform;
+
+    // Populate dropdown with platform specific reasons
+    cancelReasonSelect.innerHTML = '';
+    const reasons = platformCancelReasons[order.platform];
+    reasons.forEach(r => {
+      const opt = document.createElement('option');
+      opt.value = r.code;
+      opt.textContent = r.text;
+      cancelReasonSelect.appendChild(opt);
+    });
+
+    cancelOrderModal.classList.add('active');
+  };
+
+  // Close cancellation modal
+  if (cancelOrderClose) cancelOrderClose.addEventListener('click', closeCancelModal);
+  if (btnCancelModalClose) btnCancelModalClose.addEventListener('click', closeCancelModal);
+
+  function closeCancelModal() {
+    if (cancelOrderModal) cancelOrderModal.classList.remove('active');
+  }
+
+  // Cancel form submit (syncs API reason)
+  if (cancelOrderReasonForm) {
+    cancelOrderReasonForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const order = ordersList.find(o => o.orderId === activeCancelOrderId);
+      if (!order) return;
+
+      const code = cancelReasonSelect.value;
+      const text = cancelReasonSelect.options[cancelReasonSelect.selectedIndex].text;
+
+      let apiPath = `POST /api/v1/${order.platform.toLowerCase()}/orders/cancel`;
+      let payload = { order_id: order.orderId, cancellation_reason_code: code, reason_text: text };
+
+      alert(`[API Sync - ${order.platform} Open API]\nPath: ${apiPath}\nPayload: ${JSON.stringify(payload)}\n\nCancellation dispatched and synced to platform shop!`);
+
+      order.status = 'Cancelled';
+      order.selected = false;
+      closeCancelModal();
+      filterOrders();
+    });
+  }
+
+  // Bulk Print AWB, Invoice, Picklist simulator
+  function printDocuments(docType) {
+    const selected = ordersList.filter(o => o.selected);
+    if (selected.length === 0) {
+      alert(`Please select one or more order rows to compile and print ${docType} documents.`);
+      return;
+    }
+
+    if (orderPrintConsole && orderPrintLogLines) {
+      orderPrintLogLines.innerHTML = '';
+      orderPrintConsole.style.display = 'block';
+
+      let delay = 0;
+      let logs = [
+        `[SYSTEM] Connecting platform API document endpoints for ${selected.length} orders...`
+      ];
+
+      selected.forEach(o => {
+        logs.push(`[API FETCH] GET /api/v1/${o.platform.toLowerCase()}/documents/${docType.toLowerCase()}?order_id=${o.orderId}`);
+        logs.push(`[RENDER] Generating PDF page for ${o.orderId} (${o.customerName} - ${o.platform} TH)`);
+      });
+
+      logs.push(`[PRINTER] Compiling thermal spooler queue files...`);
+      logs.push(`[SUCCESS] Spooled ${selected.length} pages to thermal docket printer. Print job complete.`);
+
+      logs.forEach(line => {
+        setTimeout(() => {
+          const div = document.createElement('div');
+          div.textContent = line;
+          if (line.includes('[API FETCH]')) div.style.color = '#38bdf8';
+          else if (line.includes('[SUCCESS]')) div.style.color = '#10b981';
+          else if (line.includes('[PRINTER]')) div.style.color = '#f59e0b';
+          
+          orderPrintLogLines.appendChild(div);
+          orderPrintLogLines.scrollTop = orderPrintLogLines.scrollHeight;
+        }, delay);
+        delay += 400;
+      });
+    }
+  }
+
+  if (btnPrintAwb) btnPrintAwb.addEventListener('click', () => printDocuments('AWB'));
+  if (btnPrintInvoice) btnPrintInvoice.addEventListener('click', () => printDocuments('Invoice'));
+  if (btnPrintPicklist) btnPrintPicklist.addEventListener('click', () => printDocuments('Picklist'));
+
+  if (closePrintConsole) {
+    closePrintConsole.addEventListener('click', () => {
+      orderPrintConsole.style.display = 'none';
+    });
+  }
+
+  // Filter orders
+  function filterOrders() {
+    const query = orderSearch ? orderSearch.value.trim().toLowerCase() : '';
+    const statusVal = orderStatusFilter ? orderStatusFilter.value : 'ALL';
+
+    const filtered = ordersList.filter(o => {
+      const matchQuery = o.orderId.toLowerCase().includes(query) || o.customerName.toLowerCase().includes(query);
+      const matchStatus = (statusVal === 'ALL' || o.status === statusVal);
+      return matchQuery && matchStatus;
+    });
+
+    renderOrdersTable(filtered);
+  }
+
+  if (orderSearch) orderSearch.addEventListener('input', filterOrders);
+  if (orderStatusFilter) orderStatusFilter.addEventListener('change', filterOrders);
+
+  if (ordersSelectAll) {
+    ordersSelectAll.addEventListener('change', () => {
+      const isChecked = ordersSelectAll.checked;
+      const statusVal = orderStatusFilter ? orderStatusFilter.value : 'ALL';
+
+      ordersList.forEach(o => {
+        const matchStatus = (statusVal === 'ALL' || o.status === statusVal);
+        if (matchStatus) o.selected = isChecked;
+      });
+
+      renderOrdersTable(ordersList.filter(o => {
+        const matchStatus = (statusVal === 'ALL' || o.status === statusVal);
+        return matchStatus;
+      }));
+    });
+  }
+
+  // Initial orders render
+  renderOrdersTable();
 });

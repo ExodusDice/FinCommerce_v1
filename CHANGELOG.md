@@ -16,6 +16,7 @@ All notable changes to the **FinCommerce** project will be documented in this fi
 - **Dashboard In-App User Guide**: Integrated the Batch Upload User Guide card with column structure descriptions and a dynamic template download button directly into the Batch Upload Listing dashboard panel.
 - **Merchant Profile & Postpaid Billing Settings**: Implemented split first/last name inputs, postpaid plan selection, active payment method selectors, subscription cancellation hooks, and conditional deletion rules (blocks account deletion unless active plan is Free).
 - **Payment/Payout Tracking Ledger**: Added a dedicated Payment Tracking sidebar tab listing expected payouts, platform fees deductions, and net settlements with live platform exclusions and status filtering.
+- **Order Management Dashboard Tab**: Added a tab to accept orders, cancel transactions with mandatory platform-specific follow-up reasons, and spooled thermal printing logs for AWBs, invoices, and picklists, all simulated via dynamic platform API mock parameters.
 
 ---
 
