@@ -835,3 +835,96 @@ header p {
     padding: 1.5rem;
   }
 }
+
+/* Billing pricing cards details */
+#panel-billing .metric-card {
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+#panel-billing .metric-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 20px rgba(0,0,0,0.05) !important;
+}
+
+/* Active plan button */
+#panel-billing button:disabled {
+  background: var(--color-bg-dark) !important;
+  color: var(--color-text-muted) !important;
+  border-color: var(--glass-border) !important;
+  cursor: not-allowed;
+}
+
+/* Payment gateway tabs */
+.tab-nav {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1.5px solid var(--glass-border);
+  padding-bottom: 0.25rem;
+}
+
+.tab-btn {
+  background: none;
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  color: var(--color-text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: var(--transition-smooth);
+}
+
+.tab-btn.active {
+  color: var(--color-primary);
+  border-bottom-color: var(--color-primary);
+  font-weight: 600;
+}
+
+/* Modal Panels */
+.modal-panel {
+  display: none;
+  animation: fadeIn 0.3s ease;
+}
+
+.modal-panel.active {
+  display: block;
+}
+
+/* Pulse Animation for QR Webhook Listening */
+@keyframes pulse {
+  0%, 100% { opacity: 0.7; }
+  50% { opacity: 1; }
+}
+
+#qr-status-label {
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+/* Password Strength Bar Meters inside profile */
+#profile-strength-bars div {
+  transition: background-color 0.3s ease;
+}
+
+/* Chatbot container styles */
+#chatbot-container {
+  display: block;
+}
+
+#chatbot-bubble:hover {
+  transform: scale(1.06);
+}
+
+#chatbot-window {
+  display: none;
+  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+

@@ -402,6 +402,12 @@
           <li class="menu-item" data-target="panel-calculator">
             <button>🧮 Strategic Calculator</button>
           </li>
+          <li class="menu-item" data-target="panel-billing">
+            <button>💳 Billing & Plans</button>
+          </li>
+          <li class="menu-item" data-target="panel-profile">
+            <button>👤 Merchant Profile</button>
+          </li>
         </ul>
         
         <!-- Live Store Sync Indicators -->
@@ -535,79 +541,84 @@
 
         </div>
 
-        <!-- Panel 2: Inventory & Mapping -->
+        <!-- Panel 2: Stock & SKU Mappings -->
         <div id="panel-inventory" class="dashboard-panel">
-          <div class="filter-bar" style="justify-content: space-between;">
-            <input type="text" id="inventory-search" class="form-input" style="max-width: 300px; padding: 0.4rem 0.85rem; font-size: 0.85rem;" placeholder="Search SKU or Name...">
-            <div style="display: flex; gap: 0.5rem;">
-              <button class="btn btn-primary" style="width: auto; padding: 0.4rem 1rem; font-size: 0.85rem;" id="btn-add-product">
-                <span>➕</span> Add Product
-              </button>
-              <button class="btn btn-secondary" style="width: auto; padding: 0.4rem 1rem; font-size: 0.85rem; margin-top: 0;" id="btn-trigger-alert-modal">
-                <span>🔔</span> Configure Alerts
-              </button>
-            </div>
-          </div>
-
-          <div class="data-table-container">
-            <table class="data-table">
-              <thead>
-                <tr>
-                  <th>Master SKU</th>
-                  <th>Product Name</th>
-                  <th>Central Stock</th>
-                  <th>Linked Platform Nodes</th>
-                  <th>Thai Avg Selling Price</th>
-                  <th>Competitors (TH)</th>
-                  <th style="text-align: center;">Actions</th>
-                </tr>
-              </thead>
-              <tbody id="inventory-table-body">
-                <!-- Dynamically populated by app.js -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Panel 3: Batch Upload / Product Edit -->
-        <div id="panel-uploads" class="dashboard-panel">
-          <div class="metrics-grid" style="grid-template-columns: 1.5fr 1fr;">
+          <div class="metrics-grid" style="grid-template-columns: 2fr 1.2fr; gap: 1rem; align-items: start;">
             
-            <!-- Upload form -->
-            <div class="metric-card">
-              <h3 style="font-size: 1rem; margin-bottom: 1rem;">Multi-Channel Listing Publisher</h3>
+            <!-- Left Side: SKU catalog search and table -->
+            <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+              <div class="filter-bar" style="justify-content: space-between; margin-bottom: 1rem; padding: 0;">
+                <input type="text" id="inventory-search" class="form-input" style="max-width: 200px; padding: 0.45rem 0.85rem; font-size: 0.85rem;" placeholder="Search SKU or Name...">
+                <div style="display: flex; gap: 0.4rem;">
+                  <button class="btn btn-primary" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.8rem; margin: 0;" id="btn-add-product">
+                    <span>➕</span> Add Product
+                  </button>
+                  <button class="btn btn-secondary" style="width: auto; padding: 0.45rem 0.85rem; font-size: 0.8rem; margin: 0;" id="btn-trigger-alert-modal">
+                    <span>🔔</span> Config Alerts
+                  </button>
+                </div>
+              </div>
+
+              <div class="data-table-container">
+                <table class="data-table" style="font-size: 0.8rem;">
+                  <thead>
+                    <tr>
+                      <th>Master SKU</th>
+                      <th>Product Name</th>
+                      <th>Central Stock</th>
+                      <th>Linked Platform Nodes</th>
+                      <th>Price</th>
+                      <th>Competitors</th>
+                      <th style="text-align: center;">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody id="inventory-table-body">
+                    <!-- Dynamically populated by app.js -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Right Side: Multi-Channel Listing Publisher (Individual Upload) -->
+            <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+              <h3 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--color-primary); display: flex; align-items: center; gap: 0.3rem;">
+                <span>🚀</span> Multi-Channel Publisher
+              </h3>
+              <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+                Manually publish a single master SKU catalog product to your Shopee, Lazada, and TikTok shop nodes in one submit.
+              </p>
               
               <form id="batch-upload-form">
-                <div class="form-group" style="margin-bottom: 1rem;">
-                  <label class="form-label">Product Title</label>
-                  <input type="text" id="single-pub-title" class="form-input" placeholder="Enter centralized product title" required>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Product Title</label>
+                  <input type="text" id="single-pub-title" class="form-input" style="padding: 0.5rem; font-size: 0.8rem;" placeholder="Enter product display name" required>
                 </div>
                 
-                <div class="metrics-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0;">
-                  <div class="form-group" style="margin-bottom: 1rem;">
-                    <label class="form-label">Master Price (THB)</label>
-                    <input type="number" id="single-pub-price" class="form-input" placeholder="299" required>
+                <div class="metrics-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0; gap: 0.5rem;">
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">Master Price (THB)</label>
+                    <input type="number" id="single-pub-price" class="form-input" style="padding: 0.5rem; font-size: 0.8rem;" placeholder="299" required>
                   </div>
-                  <div class="form-group" style="margin-bottom: 1rem;">
-                    <label class="form-label">Warehouse Stock</label>
-                    <input type="number" id="single-pub-stock" class="form-input" placeholder="100" required>
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">Warehouse Stock</label>
+                    <input type="number" id="single-pub-stock" class="form-input" style="padding: 0.5rem; font-size: 0.8rem;" placeholder="100" required>
                   </div>
                 </div>
 
-                <div class="form-group" style="margin-bottom: 1rem;">
-                  <label class="form-label">Target Channels</label>
-                  <div class="checkbox-group" style="margin-top: 0.4rem;">
-                    <label class="checkbox-container" style="font-size: 0.8rem;">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Target Connected Store Nodes</label>
+                  <div class="checkbox-group" style="margin-top: 0.25rem;">
+                    <label class="checkbox-container" style="font-size: 0.75rem;">
                       <input type="checkbox" checked id="pub-shopee">
                       <span class="checkmark"></span>
                       Shopee TH
                     </label>
-                    <label class="checkbox-container" style="font-size: 0.8rem;">
+                    <label class="checkbox-container" style="font-size: 0.75rem;">
                       <input type="checkbox" checked id="pub-lazada">
                       <span class="checkmark"></span>
                       Lazada TH
                     </label>
-                    <label class="checkbox-container" style="font-size: 0.8rem;">
+                    <label class="checkbox-container" style="font-size: 0.75rem;">
                       <input type="checkbox" checked id="pub-tiktok">
                       <span class="checkmark"></span>
                       TikTok TH
@@ -615,34 +626,41 @@
                   </div>
                 </div>
 
-                <button type="submit" class="btn btn-primary" style="padding: 0.75rem; font-size: 0.9rem;">Publish to Selected Platforms</button>
+                <button type="submit" class="btn btn-primary" style="padding: 0.65rem; font-size: 0.85rem; margin-top: 0.5rem; width: 100%;">Publish to Selected Platforms</button>
               </form>
             </div>
 
-            <!-- Upload specs -->
-            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 1rem;">
+          </div>
+        </div>
+
+        <!-- Panel 3: Batch Upload Listing -->
+        <div id="panel-uploads" class="dashboard-panel">
+          <div class="metrics-grid" style="grid-template-columns: 1fr; gap: 1rem;">
+            
+            <!-- Bulk Upload Container Card -->
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between; gap: 1.25rem; background: #ffffff; padding: 1.5rem;">
               <div>
-                <h3 style="font-size: 1rem; margin-bottom: 0.4rem;">Bulk Excel CSV Upload</h3>
-                <p style="font-size: 0.75rem; color: var(--color-text-muted);">
-                  Upload a standardized inventory worksheet catalog. Select target channels to batch publish.
+                <h3 style="font-size: 1.05rem; margin-bottom: 0.4rem; color: var(--color-primary);">Bulk Excel CSV Upload</h3>
+                <p style="font-size: 0.8rem; color: var(--color-text-muted);">
+                  Configure target platform checkboxes, then drag and drop your completed catalog Excel/CSV templates to execute bulk mappings.
                 </p>
               </div>
 
               <!-- Checkbox selection for Batch Excel Upload -->
-              <div class="form-group" style="margin-bottom: 0.5rem;">
-                <label class="form-label" style="font-size: 0.75rem;">Sync Excel Rows To:</label>
-                <div class="checkbox-group" style="margin-top: 0.25rem;">
-                  <label class="checkbox-container" style="font-size: 0.75rem;">
+              <div class="form-group" style="margin-bottom: 0.25rem;">
+                <label class="form-label" style="font-size: 0.8rem; font-weight:600;">Sync Excel Rows To:</label>
+                <div class="checkbox-group" style="margin-top: 0.4rem;">
+                  <label class="checkbox-container" style="font-size: 0.8rem;">
                     <input type="checkbox" checked id="batch-shopee">
                     <span class="checkmark"></span>
                     Shopee TH
                   </label>
-                  <label class="checkbox-container" style="font-size: 0.75rem;">
+                  <label class="checkbox-container" style="font-size: 0.8rem;">
                     <input type="checkbox" checked id="batch-lazada">
                     <span class="checkmark"></span>
                     Lazada TH
                   </label>
-                  <label class="checkbox-container" style="font-size: 0.75rem;">
+                  <label class="checkbox-container" style="font-size: 0.8rem;">
                     <input type="checkbox" checked id="batch-tiktok">
                     <span class="checkmark"></span>
                     TikTok TH
@@ -651,13 +669,11 @@
               </div>
               
               <!-- Drag and drop zone -->
-              <div id="excel-drop-zone" style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 1.25rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.01);" onclick="document.getElementById('excel-file-input').click()">
+              <div id="excel-drop-zone" style="border: 2px dashed var(--glass-border); border-radius: 12px; padding: 2.5rem 2rem; text-align: center; cursor: pointer; background: rgba(255,255,255,0.01);" onclick="document.getElementById('excel-file-input').click()">
                 <input type="file" id="excel-file-input" style="display: none;" accept=".xlsx, .xls, .csv">
-                <span style="font-size: 1.5rem;">📤</span>
-                <p style="font-size: 0.75rem; margin-top: 0.4rem; color: var(--color-text-muted);" id="excel-drop-text">Click to choose Excel spreadsheet</p>
+                <span style="font-size: 2rem;">📤</span>
+                <p style="font-size: 0.8rem; margin-top: 0.5rem; color: var(--color-text-muted);" id="excel-drop-text">Drag & Drop spreadsheet here or click to browse files</p>
               </div>
-            </div>
-
             </div>
 
           </div>
@@ -845,6 +861,149 @@
           </div>
         </div>
 
+        <!-- Panel 6: Billing & Subscription Plans -->
+        <div id="panel-billing" class="dashboard-panel">
+          <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-main);">Billing & Subscription Plans</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Select the plan that fits your business scale. Upgrade anytime.</p>
+          </div>
+          
+          <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); gap: 1rem;">
+            <!-- Free Plan -->
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1.5px solid var(--glass-border); border-radius: 16px; padding: 1.5rem; text-align: center; background: #ffffff;">
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--color-text-muted); font-weight: 600; margin-bottom: 0.25rem;">Free Tier</h3>
+                <div style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 1rem;">฿0 <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 400;">/ mo</span></div>
+                <ul style="text-align: left; font-size: 0.8rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--color-text-muted); padding-left: 1.2rem;">
+                  <li>Up to 1 linked shop</li>
+                  <li>Max 10 central SKUs</li>
+                  <li>Manual stock synchronization</li>
+                  <li>Standard analytics board</li>
+                </ul>
+              </div>
+              <button class="btn btn-secondary" style="margin: 0; width: 100%;" disabled id="billing-free-btn">Current Active Plan</button>
+            </div>
+
+            <!-- Basic Plan -->
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1.5px solid var(--color-secondary); border-radius: 16px; padding: 1.5rem; text-align: center; background: #ffffff; box-shadow: 0 4px 10px rgba(0,0,0,0.02);">
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--color-secondary); font-weight: 600; margin-bottom: 0.25rem;">Basic Tier</h3>
+                <div style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 1rem;">฿490 <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 400;">/ mo</span></div>
+                <ul style="text-align: left; font-size: 0.8rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--color-text-muted); padding-left: 1.2rem;">
+                  <li>Up to 3 linked shops</li>
+                  <li>Max 500 central SKUs</li>
+                  <li>Semi-automated sync pipeline</li>
+                  <li>Email priority support</li>
+                </ul>
+              </div>
+              <button class="btn btn-primary" style="margin: 0; width: 100%; background: var(--color-secondary); border-color: var(--color-secondary);" id="billing-upgrade-basic">Upgrade to Basic</button>
+            </div>
+
+            <!-- Advance Plan -->
+            <div class="metric-card" style="display: flex; flex-direction: column; justify-content: space-between; border: 1.5px solid var(--color-primary); border-radius: 16px; padding: 1.5rem; text-align: center; background: #ffffff; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.08); position: relative;">
+              <div style="position: absolute; top: -10px; right: 20px; background: var(--color-primary); color: #fff; font-size: 0.65rem; padding: 0.2rem 0.5rem; border-radius: 8px; font-weight: 600;">POPULAR</div>
+              <div>
+                <h3 style="font-size: 1.1rem; color: var(--color-primary); font-weight: 600; margin-bottom: 0.25rem;">Advance Tier</h3>
+                <div style="font-size: 1.8rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 1rem;">฿990 <span style="font-size: 0.8rem; color: var(--color-text-muted); font-weight: 400;">/ mo</span></div>
+                <ul style="text-align: left; font-size: 0.8rem; line-height: 1.6; margin-bottom: 1.5rem; color: var(--color-text-muted); padding-left: 1.2rem;">
+                  <li>Unlimited linked shops</li>
+                  <li>Unlimited central SKUs</li>
+                  <li>Real-time automated sync</li>
+                  <li>Optimized pricing calculator</li>
+                  <li>24/7 dedicated support</li>
+                </ul>
+              </div>
+              <button class="btn btn-primary" style="margin: 0; width: 100%;" id="billing-upgrade-advance">Upgrade to Advance</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Panel 7: Merchant Profile & Security & Sessions -->
+        <div id="panel-profile" class="dashboard-panel">
+          <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-main);">Merchant Profile & Security</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Manage your personal details, credentials, and active terminal sessions.</p>
+          </div>
+
+          <div class="metrics-grid" style="grid-template-columns: 1.2fr 1fr; gap: 1rem; align-items: start;">
+            <!-- Left Side: Profile Form -->
+            <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+              <h3 style="font-size: 0.95rem; margin-bottom: 1rem; color: var(--color-primary);">👤 Personal Information</h3>
+              <form id="profile-info-form">
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Full Name</label>
+                  <input type="text" id="profile-name" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" value="Somchai Prasert" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Email Address</label>
+                  <input type="email" id="profile-email" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" value="somchai@gmail.com" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 0.75rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Mobile Phone</label>
+                  <input type="tel" id="profile-phone" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" value="0812345678" required>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <label class="form-label" style="font-size: 0.75rem;">Company Name</label>
+                  <input type="text" id="profile-company" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" value="Prasert Retail Group Co., Ltd." required>
+                </div>
+                <button type="submit" class="btn btn-primary" style="padding: 0.5rem 1rem; font-size: 0.8rem; width: auto; margin: 0;">Save Profile Details</button>
+              </form>
+            </div>
+
+            <!-- Right Side: Change Password & Subscription Card -->
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              
+              <!-- Subscription Tier Card -->
+              <div class="metric-card" style="background: #ffffff; padding: 1rem; border-left: 4px solid var(--color-primary);">
+                <h4 style="font-size: 0.8rem; color: var(--color-text-muted); text-transform: uppercase;">Subscription Details</h4>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.5rem;">
+                  <div>
+                    <span style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-main);" id="profile-plan-name">Free Tier</span>
+                    <p style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.1rem;">Billing Renewal: N/A</p>
+                  </div>
+                  <span class="status-badge" style="background: rgba(79, 70, 229, 0.1); color: var(--color-primary); padding: 0.25rem 0.5rem; border-radius: 8px; font-weight: 600; font-size: 0.75rem;" id="profile-plan-badge">Active</span>
+                </div>
+              </div>
+
+              <!-- Security / Change Password Form -->
+              <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+                <h3 style="font-size: 0.95rem; margin-bottom: 0.75rem; color: var(--color-warning);">🔑 Update Credentials</h3>
+                <form id="profile-password-form">
+                  <div class="form-group" style="margin-bottom: 0.5rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">New Password</label>
+                    <input type="password" id="profile-new-pass" class="form-input" style="padding: 0.4rem; font-size: 0.8rem;" placeholder="Enter new password" required>
+                    <!-- Password strength visual -->
+                    <div style="display: flex; gap: 4px; margin-top: 4px;" id="profile-strength-bars">
+                      <div style="flex:1; height:4px; background:#e2e8f0; border-radius:2px;" id="prof-bar-1"></div>
+                      <div style="flex:1; height:4px; background:#e2e8f0; border-radius:2px;" id="prof-bar-2"></div>
+                      <div style="flex:1; height:4px; background:#e2e8f0; border-radius:2px;" id="prof-bar-3"></div>
+                    </div>
+                    <span id="profile-pass-strength-msg" style="font-size:0.65rem; display:block; margin-top:4px;">Strength: Empty</span>
+                  </div>
+                  <div class="form-group" style="margin-bottom: 0.75rem;">
+                    <label class="form-label" style="font-size: 0.75rem;">Confirm New Password</label>
+                    <input type="password" id="profile-confirm-pass" class="form-input" style="padding: 0.4rem; font-size: 0.8rem;" placeholder="Confirm new password" required>
+                  </div>
+                  <button type="submit" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; width: auto; margin: 0; border-color: var(--color-warning); color: var(--color-warning);">Change Password</button>
+                </form>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Bottom: Unified Device Management console -->
+          <div class="metric-card" style="margin-top: 1rem; background: #ffffff; padding: 1.25rem;">
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--color-secondary);">📱 Active Authorized Terminals</h3>
+            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1rem;">
+              These devices are currently authenticated to access your merchant workspace. Revoking access logs them out instantly.
+            </p>
+            <div id="active-device-list-profile" style="display: flex; flex-direction: column; gap: 0.75rem;">
+              <!-- Dynamic session nodes populated by app.js -->
+            </div>
+          </div>
+
+        </div>
+
       </section>
       
     </div>
@@ -1016,6 +1175,147 @@
           </div>
         </div>
         <button type="submit" class="btn" style="background: var(--color-error); color: #fff; margin-top: 0.5rem;">Confirm Delete SKU</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Subscription Checkout Gateway Modal -->
+  <div class="alert-config-overlay" id="checkout-modal" style="z-index: 3000;">
+    <div class="modal-content" style="max-width: 460px; padding: 1.5rem; background: #ffffff; border-radius: 16px;">
+      <button class="modal-close-btn" id="checkout-modal-close" style="top: 15px; right: 15px;">&times;</button>
+      <h3 style="font-size: 1.15rem; margin-bottom: 0.25rem; font-weight:700; color:var(--color-text-main);" id="checkout-title">Upgrade Plan</h3>
+      <p style="font-size: 0.85rem; color: var(--color-primary); font-weight:600; margin-bottom: 1.25rem;" id="checkout-subtitle">Total Due: ฿490.00 / month</p>
+      
+      <!-- Payment Tab Nav -->
+      <div class="tab-nav" style="margin-bottom: 1.25rem; display: flex; border-bottom: 1px solid var(--glass-border); padding-bottom: 0.5rem; gap: 0.5rem;">
+        <button type="button" class="tab-btn active" id="pay-tab-qr" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;">Thai PromptPay QR</button>
+        <button type="button" class="tab-btn" id="pay-tab-card" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;">Credit Card</button>
+        <button type="button" class="tab-btn" id="pay-tab-bank" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;">Mobile Banking</button>
+        <button type="button" class="tab-btn" id="pay-tab-wallet" style="padding: 0.4rem 0.6rem; font-size: 0.75rem;">E-Wallet</button>
+      </div>
+
+      <!-- Payment panels -->
+      <!-- Tab 1: PromptPay QR -->
+      <div class="modal-panel active" id="pay-panel-qr">
+        <div style="display: flex; flex-direction: column; align-items: center; gap: 0.75rem; text-align: center;">
+          <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 0.75rem; width: 140px; height: 140px; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 6px rgba(0,0,0,0.02);">
+            <!-- Mock PromptPay QR code block using SVG -->
+            <svg viewBox="0 0 100 100" width="100%" height="100%" style="display: block;">
+              <rect width="100" height="100" fill="#fff"/>
+              <path d="M10,10 h20 v20 h-20 z M70,10 h20 v20 h-20 z M10,70 h20 v20 h-20 z M45,45 h10 v10 h-10 z" fill="#0f172a"/>
+              <path d="M35,15 h5 v10 h-5 z M50,10 h10 v5 h-10 z M15,35 h10 v5 h-10 z M40,40 h5 v5 h-5 z M60,60 h15 v15 h-15 z" fill="#4f46e5"/>
+              <circle cx="50" cy="50" r="12" fill="none" stroke="#003b70" stroke-width="2"/>
+              <text x="50" y="53" font-size="8" text-anchor="middle" font-weight="700" fill="#003b70">TH QR</text>
+            </svg>
+          </div>
+          <div>
+            <h4 style="font-size: 0.85rem; color: #003b70; font-weight: 700;">PromptPay (พร้อมเพย์)</h4>
+            <p style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.15rem;">Scan this QR code with your Thai Banking App to complete payment.</p>
+          </div>
+          <div style="font-size: 0.85rem; font-weight: 600; color: var(--color-primary);" id="qr-timer-label">Code expires in: 60s</div>
+          <div style="font-size: 0.75rem; color: var(--color-success);" id="qr-status-label">⏳ Listening for transaction notification webhook...</div>
+        </div>
+      </div>
+
+      <!-- Tab 2: Credit Card Form -->
+      <div class="modal-panel" id="pay-panel-card">
+        <form id="card-payment-form">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label" style="font-size: 0.75rem;">Cardholder Name</label>
+            <input type="text" class="form-input" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;" placeholder="Somchai Prasert" required>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label" style="font-size: 0.75rem;">Card Number</label>
+            <input type="text" class="form-input" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;" placeholder="4000 1234 5678 9010" required>
+          </div>
+          <div class="metrics-grid" style="grid-template-columns: 1fr 1fr; margin-bottom: 0; gap: 0.5rem;">
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+              <label class="form-label" style="font-size: 0.75rem;">Expiry Date</label>
+              <input type="text" class="form-input" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;" placeholder="MM/YY" required>
+            </div>
+            <div class="form-group" style="margin-bottom: 0.75rem;">
+              <label class="form-label" style="font-size: 0.75rem;">CVV / CVC</label>
+              <input type="password" class="form-input" style="padding: 0.5rem 0.75rem; font-size: 0.85rem;" placeholder="•••" required>
+            </div>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 0.75rem; padding: 0.65rem; font-size: 0.85rem; width: 100%;">Pay Securely via 2C2P Gateway</button>
+        </form>
+      </div>
+
+      <!-- Tab 3: Mobile Banking Grid -->
+      <div class="modal-panel" id="pay-panel-bank">
+        <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">Select your Thai bank to launch dynamic app redirect:</p>
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 0.5rem;">
+          <button type="button" class="btn btn-secondary" style="margin: 0; padding: 0.5rem; justify-content: flex-start; gap: 0.4rem; font-size: 0.8rem; display: flex; align-items: center;" onclick="processMockBankRedirect('KBank')">
+            <span style="background: #138f2e; color: #fff; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem;">KB</span>
+            K-Mobile Banking
+          </button>
+          <button type="button" class="btn btn-secondary" style="margin: 0; padding: 0.5rem; justify-content: flex-start; gap: 0.4rem; font-size: 0.8rem; display: flex; align-items: center;" onclick="processMockBankRedirect('SCB')">
+            <span style="background: #4e2a84; color: #fff; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem;">SC</span>
+            SCB EASY App
+          </button>
+          <button type="button" class="btn btn-secondary" style="margin: 0; padding: 0.5rem; justify-content: flex-start; gap: 0.4rem; font-size: 0.8rem; display: flex; align-items: center;" onclick="processMockBankRedirect('BBL')">
+            <span style="background: #0033a0; color: #fff; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem;">BB</span>
+            Bualuang mBanking
+          </button>
+          <button type="button" class="btn btn-secondary" style="margin: 0; padding: 0.5rem; justify-content: flex-start; gap: 0.4rem; font-size: 0.8rem; display: flex; align-items: center;" onclick="processMockBankRedirect('Krungsri')">
+            <span style="background: #fcd116; color: #5c4d08; width: 18px; height: 18px; border-radius: 4px; display: inline-flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.6rem;">KS</span>
+            KMA App
+          </button>
+        </div>
+      </div>
+
+      <!-- Tab 4: E-Wallets -->
+      <div class="modal-panel" id="pay-panel-wallet">
+        <form id="wallet-payment-form">
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label" style="font-size: 0.75rem;">Select Wallet Provider</label>
+            <select class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" id="wallet-provider-select" required>
+              <option value="truemoney">TrueMoney Wallet (ทรูมันนี่)</option>
+              <option value="rabbit">Rabbit LINE Pay (แรบบิท ไลน์เพย์)</option>
+            </select>
+          </div>
+          <div class="form-group" style="margin-bottom: 0.75rem;">
+            <label class="form-label" style="font-size: 0.75rem;">Merchant Phone Number (linked to wallet)</label>
+            <input type="tel" class="form-input" style="padding: 0.5rem; font-size: 0.85rem;" placeholder="08XXXXXXXX" required>
+          </div>
+          <button type="submit" class="btn btn-primary" style="margin-top: 0.75rem; padding: 0.65rem; font-size: 0.85rem; width: 100%;">Send Wallet OTP Push Challenge</button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Floating Conversational AI Support Chatbot -->
+  <div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 4000; font-family: inherit;">
+    <!-- Floating Bubble Button -->
+    <button id="chatbot-bubble" style="width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 12px rgba(79, 70, 229, 0.3); color: #fff; font-size: 1.35rem; transition: var(--transition-smooth); outline: none;">
+      💬
+    </button>
+    
+    <!-- Chat Window (Hidden initially) -->
+    <div id="chatbot-window" style="display: none; position: absolute; bottom: 60px; right: 0; width: 330px; height: 420px; background: #ffffff; border: 1px solid var(--glass-border); border-radius: 16px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); overflow: hidden; flex-direction: column;">
+      <!-- Chat Header -->
+      <div style="background: var(--color-primary); color: #fff; padding: 0.85rem 1rem; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <h4 style="font-size: 0.85rem; font-weight: 600; margin: 0; color: #fff;">FinCommerce Help Bot</h4>
+          <span style="font-size: 0.65rem; color: rgba(255,255,255,0.8);">Ask me how-to instructions</span>
+        </div>
+        <button id="chatbot-close" style="background: none; border: none; color: #fff; font-size: 1.25rem; cursor: pointer; line-height: 1;">&times;</button>
+      </div>
+      <!-- Messages Thread Viewport -->
+      <div id="chatbot-messages" style="flex: 1; padding: 1rem; overflow-y: auto; display: flex; flex-direction: column; gap: 0.75rem; background: #f8fafc; font-size: 0.8rem;">
+        <div style="background: #e2e8f0; color: var(--color-text-main); padding: 0.6rem 0.8rem; border-radius: 12px 12px 12px 0; max-width: 85%; align-self: flex-start; line-height: 1.3;">
+          Hello! I am your FinCommerce assistant. Ask me questions like:
+          <br>• <em>"how to upload products"</em>
+          <br>• <em>"how to batch upload"</em>
+          <br>• <em>"how to connect Shopee"</em>
+        </div>
+      </div>
+      <!-- Message input footer -->
+      <form id="chatbot-input-form" style="border-top: 1px solid var(--glass-border); padding: 0.5rem; display: flex; gap: 0.5rem; background: #ffffff; margin: 0;">
+        <input type="text" id="chatbot-text-input" placeholder="Type your question..." style="flex: 1; border: 1px solid #cbd5e1; border-radius: 8px; padding: 0.4rem 0.75rem; font-size: 0.8rem; outline: none;" required>
+        <button type="submit" class="btn btn-primary" style="width: auto; padding: 0.4rem 0.85rem; font-size: 0.8rem; margin: 0;">Send</button>
       </form>
     </div>
   </div>

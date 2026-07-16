@@ -27,6 +27,8 @@ This document outlines the testing parameters and compatibility matrices to veri
 | **TC-COMP-03** | Social OAuth popup messaging | Click Google login on Chrome (Windows) and Mobile Safari (iOS). | Popups open, register event listeners, and post messages back to parent window correctly. | Pending |
 | **TC-COMP-04** | Cookie Session Expiries | Check session cookie write and read in private/incognito modes. | HTTP-Only session cookies persist when "Remember Me" is toggled, and expire on session close. | Pending |
 | **TC-COMP-05** | Biometric WebAuthn prompt | Click "Sign In with Biometrics" on browsers support. | WebAuthn credentials selection prompt displays natively. | Pending |
+| **TC-COMP-06** | Chatbot Bubble Z-Index | Scroll the page and check floating chat bubble positioning. | The chat bubble stays fixed at the bottom-right and layers above all cards/tables (`z-index: 4000`). | Pending |
+| **TC-COMP-07** | PromptPay SVG Rendering | Inspect checkout PromptPay QR code on Firefox, Safari, and Chrome. | SVG vector scales dynamically and preserves high-contrast lines for physical scanning. | Pending |
 
 ### 2.2 OS Compatibility Test Cases (Platform Touch & viewport limits)
 
@@ -37,3 +39,4 @@ This document outlines the testing parameters and compatibility matrices to veri
 | **TC-OS-03** | iOS (v18-19) | Load register page on iPhone 15 Pro emulator. | Form elements stack vertically, touch targets (buttons) are >= 44px, screen doesn't zoom on input focus. | Pending |
 | **TC-OS-04** | Android | Load register page on Samsung Galaxy S23. | Soft keyboard does not break the layout or push the card action button off-screen. | Pending |
 | **TC-OS-05** | Hybrid WebViews | Connect TikTok platform link in TikTok in-app browser. | Secure redirects function and transfer OAuth tokens without session loss. | Pending |
+| **TC-OS-06** | Banking Redirection | Click "K-Mobile Banking" or other banking buttons on iOS/Android devices. | Mobile OS correctly prompts "Open in SCB/KBank App" redirect hooks (using custom URI schemes). | Pending |

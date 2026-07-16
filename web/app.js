@@ -1107,31 +1107,46 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function renderDeviceConsole() {
     const listContainer = document.getElementById('active-device-list');
-    if (!listContainer) return;
+    const profileListContainer = document.getElementById('active-device-list-profile');
+    
+    // Render for login page
+    if (listContainer) {
+      listContainer.innerHTML = '';
+      populateContainer(listContainer, 'login');
+    }
+    
+    // Render for profile page
+    if (profileListContainer) {
+      profileListContainer.innerHTML = '';
+      populateContainer(profileListContainer, 'profile');
+    }
 
-    listContainer.innerHTML = '';
+    function populateContainer(container, prefix) {
+      activeSessions.forEach(session => {
+        const item = document.createElement('div');
+        item.className = 'device-item';
+        item.id = `${prefix}-${session.id}`;
 
-    activeSessions.forEach(session => {
-      const item = document.createElement('div');
-      item.className = 'device-item';
-      item.id = session.id;
+        const deviceLogo = session.name.toLowerCase().includes('iphone') || session.name.toLowerCase().includes('android') ? '📱' : '💻';
 
-      const deviceLogo = session.name.toLowerCase().includes('iphone') || session.name.toLowerCase().includes('android') ? '📱' : '💻';
-
-      item.innerHTML = `
-        <div class="device-details">
-          <div class="device-icon">${deviceLogo}</div>
-          <div class="device-info">
-            <h4>${session.name} ${session.current ? '<span class="status-badge current">Current Session</span>' : '<span class="status-badge remote">Active Session</span>'}</h4>
-            <p>IP Address: ${session.ip} • Location: ${session.loc}</p>
+        item.innerHTML = `
+          <div class="device-details">
+            <div class="device-icon">${deviceLogo}</div>
+            <div class="device-info">
+              <h4>${session.name} ${session.current ? '<span class="status-badge current">Current Session</span>' : '<span class="status-badge remote">Active Session</span>'}</h4>
+              <p>IP Address: ${session.ip} • Location: ${session.loc}</p>
+            </div>
           </div>
-        </div>
-        ${!session.current ? `<button class="revoke-btn" onclick="revokeSession('${session.id}')">Revoke Access</button>` : ''}
-      `;
+          ${!session.current ? `<button class="revoke-btn" onclick="revokeSession('${session.id}')">Revoke Access</button>` : ''}
+        `;
 
-      listContainer.appendChild(item);
-    });
+        container.appendChild(item);
+      });
+    }
   }
+
+  // Trigger initial device render
+  renderDeviceConsole();
 
   window.downloadSampleTemplate = function() {
     const headers = "master_sku,product_name,cost_price,selling_price,stock_level,shopee_sku,lazada_sku,tiktok_sku\n" +
@@ -1146,12 +1161,18 @@ document.addEventListener('DOMContentLoaded', () => {
   };
 
   window.revokeSession = function(sessionId) {
-    const element = document.getElementById(sessionId);
-    if (!element) return;
+    const loginElement = document.getElementById(`login-${sessionId}`);
+    const profileElement = document.getElementById(`profile-${sessionId}`);
 
     if (confirm('Are you sure you want to terminate this session? The device will be signed out immediately.')) {
-      element.style.opacity = '0';
-      element.style.transform = 'translateX(50px)';
+      if (loginElement) {
+        loginElement.style.opacity = '0';
+        loginElement.style.transform = 'translateX(50px)';
+      }
+      if (profileElement) {
+        profileElement.style.opacity = '0';
+        profileElement.style.transform = 'translateX(50px)';
+      }
       
       setTimeout(() => {
         activeSessions = activeSessions.filter(s => s.id !== sessionId);
@@ -1160,4 +1181,400 @@ document.addEventListener('DOMContentLoaded', () => {
       }, 300);
     }
   };
+
+
+  // ==========================================
+  // SECTION 4: BILLING & CHECKOUT SIMULATOR
+  // ==========================================
+
+  const checkoutModal = document.getElementById('checkout-modal');
+  const btnCloseCheckout = document.getElementById('checkout-modal-close');
+  
+  const btnUpgradeBasic = document.getElementById('billing-upgrade-basic');
+  const btnUpgradeAdvance = document.getElementById('billing-upgrade-advance');
+
+  const checkoutTitle = document.getElementById('checkout-title');
+  const checkoutSubtitle = document.getElementById('checkout-subtitle');
+
+  let selectedCheckoutPlan = '';
+  let selectedCheckoutPrice = 0;
+  let promptPayTimerInterval = null;
+
+  if (btnUpgradeBasic) {
+    btnUpgradeBasic.addEventListener('click', () => openCheckout('Basic', 490));
+  }
+  if (btnUpgradeAdvance) {
+    btnUpgradeAdvance.addEventListener('click', () => openCheckout('Advance', 990));
+  }
+  if (btnCloseCheckout) {
+    btnCloseCheckout.addEventListener('click', closeCheckout);
+  }
+
+  function openCheckout(planName, price) {
+    selectedCheckoutPlan = planName;
+    selectedCheckoutPrice = price;
+
+    if (checkoutTitle && checkoutSubtitle) {
+      checkoutTitle.textContent = `Upgrade to ${planName} Plan`;
+      checkoutSubtitle.textContent = `Total Due: ฿${price.toFixed(2)} / month`;
+    }
+
+    checkoutModal.classList.add('active');
+    startPromptPayTimer();
+  }
+
+  function closeCheckout() {
+    checkoutModal.classList.remove('active');
+    if (promptPayTimerInterval) {
+      clearInterval(promptPayTimerInterval);
+    }
+  }
+
+  // Payment method tab switching
+  const payTabs = {
+    qr: { tab: document.getElementById('pay-tab-qr'), panel: document.getElementById('pay-panel-qr') },
+    card: { tab: document.getElementById('pay-tab-card'), panel: document.getElementById('pay-panel-card') },
+    bank: { tab: document.getElementById('pay-tab-bank'), panel: document.getElementById('pay-panel-bank') },
+    wallet: { tab: document.getElementById('pay-tab-wallet'), panel: document.getElementById('pay-panel-wallet') }
+  };
+
+  Object.keys(payTabs).forEach(key => {
+    const current = payTabs[key];
+    if (current.tab) {
+      current.tab.addEventListener('click', () => {
+        // Remove active state
+        Object.keys(payTabs).forEach(k => {
+          payTabs[k].tab?.classList.remove('active');
+          payTabs[k].panel?.classList.remove('active');
+        });
+        // Set current active
+        current.tab.classList.add('active');
+        current.panel.classList.add('active');
+      });
+    }
+  });
+
+  // PromptPay Countdown Timer and simulation
+  function startPromptPayTimer() {
+    const timerLabel = document.getElementById('qr-timer-label');
+    const statusLabel = document.getElementById('qr-status-label');
+    if (!timerLabel || !statusLabel) return;
+
+    let countdown = 60;
+    timerLabel.textContent = `Code expires in: ${countdown}s`;
+    statusLabel.textContent = `⏳ Listening for transaction notification webhook...`;
+
+    if (promptPayTimerInterval) clearInterval(promptPayTimerInterval);
+
+    promptPayTimerInterval = setInterval(() => {
+      countdown--;
+      timerLabel.textContent = `Code expires in: ${countdown}s`;
+
+      // Mock dynamic webhook push at 55 seconds remaining (5 seconds in)
+      if (countdown === 55) {
+        clearInterval(promptPayTimerInterval);
+        statusLabel.textContent = `✅ Payment verified via bank API callback!`;
+        setTimeout(() => {
+          executePlanUpgrade(selectedCheckoutPlan);
+        }, 1200);
+      }
+
+      if (countdown <= 0) {
+        clearInterval(promptPayTimerInterval);
+        timerLabel.textContent = `Code expired`;
+        statusLabel.textContent = `❌ Transaction timed out. Please try again.`;
+      }
+    }, 1000);
+  }
+
+  function executePlanUpgrade(planName) {
+    alert(`Success: Payment Confirmed!\nYour account workspace has been upgraded to the ${planName} Plan.`);
+    
+    // Update Top Navigation account tier badge
+    const badge = document.querySelector('.user-profile-badge');
+    if (badge) {
+      badge.textContent = `${planName} Tier`;
+    }
+
+    // Update Profile Plan details
+    const profilePlan = document.getElementById('profile-plan-name');
+    if (profilePlan) {
+      profilePlan.textContent = `${planName} Plan`;
+    }
+
+    // Disable upgrade buttons that were purchased
+    const freeBtn = document.getElementById('billing-free-btn');
+    const basicBtn = document.getElementById('billing-upgrade-basic');
+    const advBtn = document.getElementById('billing-upgrade-advance');
+
+    if (planName === 'Basic') {
+      if (basicBtn) {
+        basicBtn.disabled = true;
+        basicBtn.textContent = 'Current Plan';
+      }
+      if (advBtn) {
+        advBtn.disabled = false;
+        advBtn.textContent = 'Upgrade to Advance';
+      }
+    } else if (planName === 'Advance') {
+      if (basicBtn) {
+        basicBtn.disabled = true;
+        basicBtn.textContent = 'Basic Tier Active';
+      }
+      if (advBtn) {
+        advBtn.disabled = true;
+        advBtn.textContent = 'Current Plan';
+      }
+    }
+
+    closeCheckout();
+  }
+
+  // Credit Card Form Submit Simulation
+  const cardForm = document.getElementById('card-payment-form');
+  if (cardForm) {
+    cardForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      alert('Authorizing credit card transaction with 2C2P payment gateway...');
+      setTimeout(() => {
+        executePlanUpgrade(selectedCheckoutPlan);
+      }, 1500);
+    });
+  }
+
+  // Mobile Banking Redirect Simulator
+  window.processMockBankRedirect = function(bankName) {
+    alert(`Redirection Hook Dispatched: Opening mobile banking interface for ${bankName}...`);
+    setTimeout(() => {
+      executePlanUpgrade(selectedCheckoutPlan);
+    }, 1500);
+  };
+
+  // E-Wallet Submit Simulation
+  const walletForm = document.getElementById('wallet-payment-form');
+  if (walletForm) {
+    walletForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const provider = document.getElementById('wallet-provider-select').value;
+      alert(`OTP Push Challenge sent to wallet app (${provider}). Approve the payment prompt on your phone.`);
+      setTimeout(() => {
+        executePlanUpgrade(selectedCheckoutPlan);
+      }, 1500);
+    });
+  }
+
+
+  // ==========================================
+  // SECTION 5: PROFILE & SECURITY CONTROLLER
+  // ==========================================
+
+  const profileInfoForm = document.getElementById('profile-info-form');
+  if (profileInfoForm) {
+    profileInfoForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('profile-name').value.trim();
+      const email = document.getElementById('profile-email').value.trim();
+      const phone = document.getElementById('profile-phone').value.trim();
+      const company = document.getElementById('profile-company').value.trim();
+
+      alert(`Success: Saved Profile Info!\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nCompany: ${company}`);
+    });
+  }
+
+  // Live password auditor inside profile
+  const profileNewPass = document.getElementById('profile-new-pass');
+  const profileConfirmPass = document.getElementById('profile-confirm-pass');
+  const profileStrengthMsg = document.getElementById('profile-pass-strength-msg');
+  const profileBars = [
+    document.getElementById('prof-bar-1'),
+    document.getElementById('prof-bar-2'),
+    document.getElementById('prof-bar-3')
+  ];
+
+  if (profileNewPass) {
+    profileNewPass.addEventListener('input', () => {
+      const pass = profileNewPass.value;
+      let score = 0;
+
+      if (pass.length >= 8) score++;
+      if (/[A-Z]/.test(pass) && /[a-z]/.test(pass)) score++;
+      if (/[0-9]/.test(pass) || /[^A-Za-z0-9]/.test(pass)) score++;
+
+      // Auditing against leaked passwords list
+      const leakedList = ["password123", "12345678", "qwertyuiop", "admin123", "love1234"];
+      const isLeaked = leakedList.includes(pass.toLowerCase());
+
+      profileBars.forEach(bar => { if (bar) bar.style.backgroundColor = '#e2e8f0'; });
+
+      if (pass.length === 0) {
+        profileStrengthMsg.textContent = 'Strength: Empty';
+        profileStrengthMsg.style.color = 'var(--color-text-muted)';
+      } else if (isLeaked) {
+        profileStrengthMsg.textContent = '⚠️ CRITICAL: Password found in public breaches!';
+        profileStrengthMsg.style.color = 'var(--color-error)';
+        if (profileBars[0]) profileBars[0].style.backgroundColor = 'var(--color-error)';
+      } else if (score === 1) {
+        profileStrengthMsg.textContent = 'Weak';
+        profileStrengthMsg.style.color = 'var(--color-error)';
+        if (profileBars[0]) profileBars[0].style.backgroundColor = 'var(--color-error)';
+      } else if (score === 2) {
+        profileStrengthMsg.textContent = 'Fair';
+        profileStrengthMsg.style.color = 'var(--color-warning)';
+        if (profileBars[0]) profileBars[0].style.backgroundColor = 'var(--color-warning)';
+        if (profileBars[1]) profileBars[1].style.backgroundColor = 'var(--color-warning)';
+      } else if (score === 3) {
+        profileStrengthMsg.textContent = 'Strong';
+        profileStrengthMsg.style.color = 'var(--color-success)';
+        profileBars.forEach(bar => { if (bar) bar.style.backgroundColor = 'var(--color-success)'; });
+      }
+    });
+  }
+
+  const profilePasswordForm = document.getElementById('profile-password-form');
+  if (profilePasswordForm) {
+    profilePasswordForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const nPass = profileNewPass.value;
+      const cPass = profileConfirmPass.value;
+
+      const leakedList = ["password123", "12345678", "qwertyuiop", "admin123", "love1234"];
+      if (leakedList.includes(nPass.toLowerCase())) {
+        alert('Security Block: Password has been leaked in public breaches. Choose a secure alternative.');
+        return;
+      }
+
+      if (nPass !== cPass) {
+        alert('Error: Confirm password does not match.');
+        return;
+      }
+
+      alert('Success: Credentials updated successfully! WebSocket tokens regenerated.');
+      profilePasswordForm.reset();
+      profileStrengthMsg.textContent = 'Strength: Empty';
+      profileStrengthMsg.style.color = 'var(--color-text-muted)';
+      profileBars.forEach(bar => { if (bar) bar.style.backgroundColor = '#e2e8f0'; });
+    });
+  }
+
+
+  // ==========================================
+  // SECTION 6: IN-APP AI HELP CHATBOT
+  // ==========================================
+
+  const chatbotBubble = document.getElementById('chatbot-bubble');
+  const chatbotWindow = document.getElementById('chatbot-window');
+  const chatbotClose = document.getElementById('chatbot-close');
+  const chatbotForm = document.getElementById('chatbot-input-form');
+  const chatbotInput = document.getElementById('chatbot-text-input');
+  const chatbotMessages = document.getElementById('chatbot-messages');
+
+  if (chatbotBubble && chatbotWindow) {
+    chatbotBubble.addEventListener('click', () => {
+      const isVisible = chatbotWindow.style.display === 'flex';
+      chatbotWindow.style.display = isVisible ? 'none' : 'flex';
+      if (!isVisible && chatbotMessages) {
+        chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+      }
+    });
+  }
+
+  if (chatbotClose) {
+    chatbotClose.addEventListener('click', () => {
+      chatbotWindow.style.display = 'none';
+    });
+  }
+
+  if (chatbotForm) {
+    chatbotForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const q = chatbotInput.value.trim();
+      if (!q) return;
+
+      // Append User message
+      appendChatMessage(q, 'user');
+      chatbotInput.value = '';
+
+      // Generate bot response
+      setTimeout(() => {
+        const botResponse = generateBotAnswer(q);
+        appendChatMessage(botResponse, 'bot');
+      }, 500);
+    });
+  }
+
+  function appendChatMessage(text, sender) {
+    if (!chatbotMessages) return;
+
+    const div = document.createElement('div');
+    if (sender === 'user') {
+      div.style.background = 'var(--color-primary)';
+      div.style.color = '#ffffff';
+      div.style.padding = '0.6rem 0.8rem';
+      div.style.borderRadius = '12px 12px 0 12px';
+      div.style.maxWidth = '85%';
+      div.style.alignSelf = 'flex-end';
+      div.style.lineHeight = '1.3';
+    } else {
+      div.style.background = '#e2e8f0';
+      div.style.color = 'var(--color-text-main)';
+      div.style.padding = '0.6rem 0.8rem';
+      div.style.borderRadius = '12px 12px 12px 0';
+      div.style.maxWidth = '85%';
+      div.style.alignSelf = 'flex-start';
+      div.style.lineHeight = '1.3';
+    }
+
+    div.innerHTML = text;
+    chatbotMessages.appendChild(div);
+    chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
+  }
+
+  function generateBotAnswer(query) {
+    const text = query.toLowerCase();
+
+    if (text.includes('batch') || text.includes('excel') || text.includes('bulk') || text.includes('csv') || text.includes('template')) {
+      return `<strong>Bulk Excel Upload Guide:</strong><br>
+              1. Go to the <strong>Batch Upload Listing</strong> tab.<br>
+              2. Download the empty template using the <strong>Download Template (.csv)</strong> button.<br>
+              3. Populate your rows (headers: <code>master_sku</code>, <code>product_name</code>, <code>stock_level</code>, <code>selling_price</code>).<br>
+              4. Configure your sync shops check boxes, then drop the sheet in the upload block.`;
+    }
+
+    if (text.includes('manual') || text.includes('upload') || text.includes('create') || text.includes('publish') || text.includes('single')) {
+      return `<strong>Manual Product Publishing:</strong><br>
+              1. Go to the <strong>Stock & SKU Mappings</strong> tab.<br>
+              2. Locate the <strong>Multi-Channel Publisher</strong> form card on the right side.<br>
+              3. Enter title, stock count, and price.<br>
+              4. Select platforms (Shopee, Lazada, TikTok Shop) and click <strong>Publish</strong>.`;
+    }
+
+    if (text.includes('connect') || text.includes('shopee') || text.includes('lazada') || text.includes('tiktok') || text.includes('oauth')) {
+      return `<strong>Connecting Platform Stores:</strong><br>
+              1. Navigate to the <strong>Channel Connections</strong> tab.<br>
+              2. Click <strong>Re-auth Store</strong> beside Shopee, Lazada, or TikTok Shop.<br>
+              3. Follow the secure OAuth gateway to log in and authorize sync scopes.`;
+    }
+
+    if (text.includes('delete') || text.includes('retract') || text.includes('remove')) {
+      return `<strong>Retracting Products:</strong><br>
+              1. Go to <strong>Stock & SKU Mappings</strong>.<br>
+              2. Click the 🗑️ <strong>Del</strong> button next to the SKU row.<br>
+              3. Check the shop checkboxes if you wish to automatically retract listings from connected shops, and confirm.`;
+    }
+
+    if (text.includes('plan') || text.includes('price') || text.includes('billing') || text.includes('subscription')) {
+      return `<strong>Pricing Plans & Billing:</strong><br>
+              We offer three tiers:
+              <br>• <strong>Free</strong>: 1 shop, 10 SKUs
+              <br>• <strong>Basic (฿490/mo)</strong>: 3 shops, 500 SKUs
+              <br>• <strong>Advance (฿990/mo)</strong>: Unlimited shops, unlimited SKUs.
+              <br>Go to the <strong>Billing & Plans</strong> tab to select and pay.`;
+    }
+
+    return `I'm not sure I understand. I can help you with:<br>
+            • <em>"how to batch upload"</em><br>
+            • <em>"how to publish manually"</em><br>
+            • <em>"how to connect stores"</em><br>
+            • <em>"pricing plans"</em>`;
+  }
 });
