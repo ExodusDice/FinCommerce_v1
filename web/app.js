@@ -2409,6 +2409,28 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  // Profile nested sub-tabs toggling
+  const profileSubtabPersonal = document.getElementById('profile-subtab-personal');
+  const profileSubtabPlans = document.getElementById('profile-subtab-plans');
+  const profileViewPersonal = document.getElementById('profile-view-personal');
+  const profileViewPlans = document.getElementById('profile-view-plans');
+
+  if (profileSubtabPersonal && profileSubtabPlans && profileViewPersonal && profileViewPlans) {
+    profileSubtabPersonal.addEventListener('click', () => {
+      profileSubtabPersonal.classList.add('active');
+      profileSubtabPlans.classList.remove('active');
+      profileViewPersonal.classList.add('active');
+      profileViewPlans.classList.remove('active');
+    });
+
+    profileSubtabPlans.addEventListener('click', () => {
+      profileSubtabPlans.classList.add('active');
+      profileSubtabPersonal.classList.remove('active');
+      profileViewPlans.classList.add('active');
+      profileViewPersonal.classList.remove('active');
+    });
+  }
+
   // Initial orders render
   renderOrdersTable();
 });

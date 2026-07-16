@@ -75,23 +75,27 @@ For fine-grained inventory control, navigate to the **Stock & SKU Mappings** tab
 ---
 
 ## 5. Managing Merchant Profile & Postpaid Billing
-Navigate to the **Merchant Profile** tab on the sidebar to adjust security parameters, postpaid subscription plans, and workspace limits.
+Navigate to the **Merchant Profile** tab on the sidebar. The panel is split into two sub-tabs: **Personal & Security** and **Subscription Plans**.
 
-### 5.1 Editing Profile Identity
+### 5.1 Personal & Security Sub-tab
+Under this tab, you can manage personal identity, update passwords, and manage active session terminals:
 1. Under **Personal Information**, you can modify:
    * **First Name** and **Last Name** (managed in split inputs for accounting and compliance).
    * **Email Address** (primary login credential).
    * **Mobile Phone** (destination for OTP challenge notifications).
    * **Company Name** (business name for invoice receipts).
 2. Click **Save Profile Details** to update configuration stores.
+3. Under **Update Credentials**, update account password and audit strength.
+4. Under **Active Authorized Terminals**, inspect or revoke device access tokens.
 
-### 5.2 Subscription Configuration (Postpay Model)
+### 5.2 Subscription Plans Sub-tab
 FinCommerce subscriptions operate under a **Postpay** billing model. Merchants are invoiced at the end of each monthly cycle based on the active plan tier and linked shop nodes count.
 * **Tiers & Payment Method Selection**: You can change your active tier dropdown (Free, Basic, Advance) or select a Payment Method (Credit Card, PromptPay QR Autopay, E-Wallet) and click **Save Billing Info**.
+* **Comparative Plan Grid**: Review the limits and benefits of the Free, Basic, and Advance tiers. Click **Upgrade to Basic** or **Upgrade to Advance** to trigger the multi-tab payment gateway and Thai PromptPay QR checkout overlay.
 
 ### 5.3 Cancelling Subscription
 To stop future postpaid billing cycles:
-1. Under **Subscription & Billing**, click the **Cancel Subscription** button.
+1. Under **Subscription Plans**, click the **Cancel Subscription** button.
 2. Confirm the action in the validation alert box.
 3. The system immediately downgrades your account to the **Free Tier**, resets the payment method to **None**, and restricts your catalog to 1 linked store and 10 SKUs. Outstanding usage charges for the current cycle will be invoiced at the end of the month.
 
