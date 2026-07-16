@@ -123,5 +123,29 @@ Navigate to the **Payment Tracking** tab on the sidebar to audit order settlemen
 2. **Status Dropdown**: Filter transactions by status (`Settled`, `Pending`, `On Hold`).
 3. **Shop Filters**: Check/uncheck Shopee, Lazada, or TikTok checkboxes to include or exclude specific channels. The summary cards will recalculate active balances automatically.
 
+---
+
+## 7. Daily Shipping & Inbound Customer Returns
+Navigate to the **Shipping Progress** tab on the sidebar to monitor daily courier transits and action customer returns.
+
+### 7.1 Outbound Deliveries
+* View ongoing outbound transits (Flash Express, J&T Express, Kerry Logistics, Ninja Van).
+* **Track Parcel**: Click the `Track` button next to any shipment to open a vertical routing timeline detailing the exact handover, sorting hubs, and signature timestamps.
+* Outbound status metrics automatically count transit volumes, out-for-delivery loads, and completed handovers.
+
+### 7.2 Customer Returns & Claims Tasks
+Under the **Inbound Returns & Tasks** tab, you can track customer-initiated returns:
+* ** returned SKU Item**: Lists the specific product the buyer has returned.
+* **Return Reason**: Customer's refund claim reason (e.g. Defective, Wrong Size).
+* **Inspection Checklist Task**:
+  1. Click `Inspect & Process` next to any return record flagged as `Awaiting Inspection`.
+  2. Complete the mandatory quality verification checks:
+     * Confirm outer labels match courier manifest records.
+     * Confirm physical SKU matches catalog records.
+     * Confirm item is in clean, restockable condition.
+  3. Click **Approve & Restock** to automatically increment the catalog stock quantity by +1, process the customer's refund, and mark the status as `Refund Processed`.
+  4. Alternatively, click **Reject Claim** to set the status to `Rejected` and flag the package for buyer-dispute handling.
+
+
 
 

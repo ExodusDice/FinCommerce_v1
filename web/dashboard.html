@@ -408,6 +408,9 @@
           <li class="menu-item" data-target="panel-payments">
             <button>💰 Payment Tracking</button>
           </li>
+          <li class="menu-item" data-target="panel-shipping">
+            <button>🚚 Shipping Progress</button>
+          </li>
           <li class="menu-item" data-target="panel-profile">
             <button>👤 Merchant Profile</button>
           </li>
@@ -1000,6 +1003,143 @@
           </div>
         </div>
 
+        <!-- Panel 9: Shipping & Customer Returns Progress Tracking -->
+        <div id="panel-shipping" class="dashboard-panel">
+          <div style="margin-bottom: 1rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+            <div>
+              <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-main);">Logistics & Returns Tracking</h2>
+              <p style="font-size: 0.8rem; color: var(--color-text-muted);">Manage daily outbound shipping milestones and inbound customer return checklists.</p>
+            </div>
+            <!-- Sub-tab selector -->
+            <div class="tab-nav" style="border-bottom: none; margin: 0; padding: 0;">
+              <button type="button" class="tab-btn active" id="ship-subtab-outbound" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">🚚 Outbound Deliveries</button>
+              <button type="button" class="tab-btn" id="ship-subtab-returns" style="padding: 0.4rem 0.8rem; font-size: 0.75rem;">🔄 Inbound Returns & Tasks</button>
+            </div>
+          </div>
+
+          <!-- Outbound View -->
+          <div id="ship-view-outbound" class="modal-panel active">
+            <!-- Outbound metrics summaries -->
+            <div class="metrics-grid" style="margin-bottom: 1rem;">
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-secondary); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">Orders In Transit</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="ship-transit-count">5</div>
+                <div style="font-size: 0.65rem; color: var(--color-text-muted); margin-top: 0.1rem;">Avg transit time: 1.8 days</div>
+              </div>
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-warning); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">Out for Delivery Today</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="ship-outfordelivery-count">2</div>
+                <div style="font-size: 0.65rem; color: var(--color-primary); margin-top: 0.1rem;">⚡ Expected dispatch finished today</div>
+              </div>
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-success); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">Delivered (Today)</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="ship-delivered-count">12</div>
+                <div style="font-size: 0.65rem; color: var(--color-success); margin-top: 0.1rem;">✓ 100% SLA target met</div>
+              </div>
+            </div>
+
+            <!-- Filters -->
+            <div class="metric-card" style="background: #ffffff; padding: 0.75rem 1rem; margin-bottom: 1rem;">
+              <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+                <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 200px;">
+                  <input type="text" id="ship-search" class="form-input" style="padding: 0.4rem 0.75rem; font-size: 0.75rem; max-width: 220px;" placeholder="Search Order ID or Tracking...">
+                  <select id="ship-carrier-filter" class="form-input" style="max-width: 140px; padding: 0.4rem; font-size: 0.75rem;">
+                    <option value="ALL">All Carriers</option>
+                    <option value="Flash Express">Flash Express</option>
+                    <option value="J&T Express">J&T Express</option>
+                    <option value="Kerry Logistics">Kerry Logistics</option>
+                    <option value="Ninja Van">Ninja Van</option>
+                  </select>
+                </div>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                  <span style="font-size: 0.7rem; font-weight: 600; color: var(--color-text-muted);">Channels:</span>
+                  <label class="checkbox-container" style="font-size: 0.7rem; margin: 0;">
+                    <input type="checkbox" checked id="ship-filter-shopee">
+                    <span class="checkmark" style="width: 12px; height: 12px; margin-right: 0.2rem;"></span>
+                    Shopee
+                  </label>
+                  <label class="checkbox-container" style="font-size: 0.7rem; margin: 0;">
+                    <input type="checkbox" checked id="ship-filter-lazada">
+                    <span class="checkmark" style="width: 12px; height: 12px; margin-right: 0.2rem;"></span>
+                    Lazada
+                  </label>
+                  <label class="checkbox-container" style="font-size: 0.7rem; margin: 0;">
+                    <input type="checkbox" checked id="ship-filter-tiktok">
+                    <span class="checkmark" style="width: 12px; height: 12px; margin-right: 0.2rem;"></span>
+                    TikTok
+                  </label>
+                </div>
+              </div>
+            </div>
+
+            <!-- Ledger Table -->
+            <div class="metric-card" style="background: #ffffff; padding: 1rem;">
+              <div class="data-table-container" style="max-height: 220px; overflow-y: auto;">
+                <table class="data-table" style="font-size: 0.75rem;">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Platform</th>
+                      <th>Logistics Partner</th>
+                      <th>Tracking Code</th>
+                      <th>Last Status / Location</th>
+                      <th style="text-align: center;">Delivery Status</th>
+                      <th style="text-align: center;">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="ship-table-body">
+                    <!-- Outbound dynamic rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Returns View -->
+          <div id="ship-view-returns" class="modal-panel">
+            <!-- Returns metrics summaries -->
+            <div class="metrics-grid" style="margin-bottom: 1rem;">
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-error); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">Pending Inspection</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="returns-pending-count">2</div>
+                <div style="font-size: 0.65rem; color: var(--color-text-muted); margin-top: 0.1rem;">Awaiting warehouse checks</div>
+              </div>
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-warning); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">In Transit (Returns)</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="returns-transit-count">1</div>
+                <div style="font-size: 0.65rem; color: var(--color-text-muted); margin-top: 0.1rem;">Buyer-returned packages in route</div>
+              </div>
+              <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-success); padding: 0.75rem 1rem;">
+                <h4 style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.15rem;">Refunds Released (Today)</h4>
+                <div class="value" style="font-size: 1.3rem; font-weight: 700; color: var(--color-text-main);" id="returns-refunded-count">3</div>
+                <div style="font-size: 0.65rem; color: var(--color-success); margin-top: 0.1rem;">✓ RESTOCK automation complete</div>
+              </div>
+            </div>
+
+            <!-- Returns Table -->
+            <div class="metric-card" style="background: #ffffff; padding: 1rem;">
+              <div class="data-table-container" style="max-height: 220px; overflow-y: auto;">
+                <table class="data-table" style="font-size: 0.75rem;">
+                  <thead>
+                    <tr>
+                      <th>Order ID</th>
+                      <th>Platform</th>
+                      <th>Returned SKU Item</th>
+                      <th>Return Reason</th>
+                      <th>Return Carrier & Code</th>
+                      <th>Verification Status</th>
+                      <th style="text-align: center;">Related Task / Action</th>
+                    </tr>
+                  </thead>
+                  <tbody id="returns-table-body">
+                    <!-- Returns dynamic rows -->
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
         <!-- Panel 7: Merchant Profile & Security & Sessions -->
         <div id="panel-profile" class="dashboard-panel">
           <div style="margin-bottom: 1.25rem;">
@@ -1399,6 +1539,74 @@
         </form>
       </div>
 
+    </div>
+  </div>
+
+  <!-- Shipping Progress Tracking Timeline Modal -->
+  <div class="alert-config-overlay" id="shipping-track-modal" style="z-index: 3100;">
+    <div class="modal-content" style="max-width: 400px; padding: 1.5rem; background: #ffffff; border-radius: 16px; position: relative;">
+      <button class="modal-close-btn" id="shipping-track-close" style="top: 15px; right: 15px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 0.25rem;">Shipment Milestones</h3>
+      <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1rem;">Tracking Number: <span id="track-modal-code" style="font-weight: 600; color: var(--color-primary);">KER-TH-9029</span></p>
+
+      <!-- Carrier & Status indicator -->
+      <div style="background: #f8fafc; border-radius: 12px; padding: 0.75rem; display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.25rem;">
+        <div>
+          <span style="font-size: 0.7rem; color: var(--color-text-muted); text-transform: uppercase;">Logistics Partner</span>
+          <h4 id="track-modal-carrier" style="font-size: 0.85rem; font-weight: 600; color: var(--color-text-main);">Kerry Logistics</h4>
+        </div>
+        <div id="track-modal-status-badge">
+          <span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); border-color: rgba(16, 185, 129, 0.2); font-weight: 600; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 8px;">Delivered</span>
+        </div>
+      </div>
+
+      <!-- Timeline steps -->
+      <div class="vertical-timeline" id="track-modal-timeline" style="display: flex; flex-direction: column; gap: 1rem; border-left: 2px solid var(--glass-border); padding-left: 1.25rem; margin-left: 0.5rem; max-height: 250px; overflow-y: auto;">
+        <!-- Timeline milestones injected by JS -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Customer Return Inspection & Processing Modal -->
+  <div class="alert-config-overlay" id="return-inspect-modal" style="z-index: 3200;">
+    <div class="modal-content" style="max-width: 420px; padding: 1.5rem; background: #ffffff; border-radius: 16px; position: relative;">
+      <button class="modal-close-btn" id="return-inspect-close" style="top: 15px; right: 15px; border: none; background: none; font-size: 1.5rem; cursor: pointer; color: var(--color-text-muted);">&times;</button>
+      
+      <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--color-text-main); margin-bottom: 0.25rem;">Verify Buyer Return Request</h3>
+      <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 1rem;">Order Reference: <span id="inspect-modal-order" style="font-weight: 600; color: var(--color-primary);">ORD-2026-9906</span></p>
+
+      <div style="background: #f1f5f9; border-radius: 10px; padding: 0.75rem; margin-bottom: 1.25rem;">
+        <div style="font-size: 0.75rem; color: var(--color-text-main); margin-bottom: 0.25rem;"><span style="font-weight: 600;">Returned Item:</span> <span id="inspect-modal-item">Premium T-Shirt x1</span></div>
+        <div style="font-size: 0.75rem; color: var(--color-text-main);"><span style="font-weight: 600;">Buyer Claim Reason:</span> <span id="inspect-modal-reason" style="color: var(--color-error);">Defective / Damaged on Arrival</span></div>
+      </div>
+
+      <!-- Verification Checklist Form -->
+      <h4 style="font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted); text-transform: uppercase; margin-bottom: 0.5rem;">Warehouse Quality Checklist</h4>
+      <form id="return-verification-form">
+        <div style="display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 1.25rem;">
+          <label class="checkbox-container" style="font-size: 0.75rem; margin: 0; display:flex; align-items:center;">
+            <input type="checkbox" id="chk-inspect-packaging" required>
+            <span class="checkmark" style="width: 15px; height: 15px; margin-right: 0.5rem; flex-shrink:0;"></span>
+            Outer packaging/labels matches courier manifest
+          </label>
+          <label class="checkbox-container" style="font-size: 0.75rem; margin: 0; display:flex; align-items:center;">
+            <input type="checkbox" id="chk-inspect-sku" required>
+            <span class="checkmark" style="width: 15px; height: 15px; margin-right: 0.5rem; flex-shrink:0;"></span>
+            Physical SKU item matches catalog specs
+          </label>
+          <label class="checkbox-container" style="font-size: 0.75rem; margin: 0; display:flex; align-items:center;">
+            <input type="checkbox" id="chk-inspect-wear" required>
+            <span class="checkmark" style="width: 15px; height: 15px; margin-right: 0.5rem; flex-shrink:0;"></span>
+            No buyer-induced wear or tag removal detected
+          </label>
+        </div>
+
+        <div style="display: flex; gap: 0.5rem;">
+          <button type="submit" id="btn-approve-return" class="btn btn-primary" style="flex:1; padding: 0.5rem; font-size: 0.8rem; margin: 0;">Approve & Restock</button>
+          <button type="button" id="btn-reject-return" class="btn btn-secondary" style="padding: 0.5rem 1rem; font-size: 0.8rem; margin: 0; border-color: var(--color-error); color: var(--color-error);">Reject Claim</button>
+        </div>
+      </form>
     </div>
   </div>
 

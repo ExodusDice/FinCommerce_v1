@@ -14,6 +14,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-FREE-02** | Master SKU Threshold | Attempt to insert an 11th Master SKU catalog item. | System blocks catalog creation with warning: "10 SKU limit reached. Upgrade to add more." | Pending |
 | **TC-FREE-03** | Auto-Sync Check | Force webhook stock changes on connected Shopee shop. | Multi-channel sync does not execute. Central inventory is updated but other channels remain manual. | Pending |
 | **TC-FREE-04** | Payout Delay Audit | Check expected payout dates display delay. | Free tier ledger reports payouts with a 48-hour batch synchronization delay. | Pending |
+| **TC-FREE-05** | Return Inspection Cap | Verify returns limit enforcement on Free accounts. | System limits quality inspection tasks to 5 items monthly, requiring manual inventory restocking. | Pending |
 
 ---
 
@@ -27,6 +28,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-BASIC-02** | Master SKU Limit | Upload an Excel file containing 501 SKU rows on a clean Basic Tier account. | System parses first 500 items successfully and rejects the 501st row with a limit notice. | Pending |
 | **TC-BASIC-03** | Semi-Auto Sync Check | Adjust inventory stock on dashboard. | Stock updates are dispatched to connected Shopee, Lazada, and TikTok shops (Semi-auto sync triggers successfully). | Pending |
 | **TC-BASIC-04** | Payout Delay Audit | Check expected payout dates display delay. | Basic tier ledger reports payouts updated twice daily (12-hour sync window). | Pending |
+| **TC-BASIC-05** | Return Inspection Cap | Verify returns limit enforcement on Basic accounts. | System allows up to 100 return verification tasks monthly, with automated catalog restock actions. | Pending |
 
 ---
 
@@ -40,6 +42,7 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-ADV-02** | Autopilot Sync Check | Trigger stock deductions via Shopee webhook. | Redis queues up commands and instantly pushes updates to Lazada and TikTok Shop in real-time (< 2s). | Pending |
 | **TC-ADV-03** | Strategic Pricing Check| Slide pricing cost variables inside target pricing simulator. | Real-time margin percentages and suggested retail prices recalculate on keystroke without lag. | Pending |
 | **TC-ADV-04** | Payout Delay Audit | Check expected payout dates display delay. | Advance tier ledger reports real-time payout calculations instantly synced via platform API webhooks. | Pending |
+| **TC-ADV-05** | Return Inspection Cap | Verify returns limit enforcement on Advance accounts. | System supports unlimited returns, integrated automated chatbot dispute routing, and instant restock actions. | Pending |
 
 ---
 

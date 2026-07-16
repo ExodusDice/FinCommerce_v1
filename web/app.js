@@ -1752,4 +1752,359 @@ document.addEventListener('DOMContentLoaded', () => {
 
   // Initial ledger rendering
   renderPayoutLedger();
+
+
+  // ==========================================
+  // SECTION 8: DAILY SHIPPING & RETURNS LEDGER
+  // ==========================================
+
+  // Outbound Mock Data
+  let shippingItems = [
+    { 
+      orderId: 'ORD-2026-9901', platform: 'Shopee', carrier: 'Flash Express', trackingCode: 'TH-FL-8890281', 
+      lastCheckpoint: 'Delivered - Signed by customer', status: 'Delivered',
+      milestones: [
+        { time: '2026-07-16 14:30', detail: 'Delivered successfully. Receiver: Suchart S.' },
+        { time: '2026-07-16 09:15', detail: 'Out for delivery with Flash rider Somchai P.' },
+        { time: '2026-07-15 21:00', detail: 'Arrived at Bangkok Lak Si Sorting Hub.' },
+        { time: '2026-07-14 18:00', detail: 'Package picked up from merchant warehouse.' }
+      ]
+    },
+    { 
+      orderId: 'ORD-2026-9902', platform: 'Lazada', carrier: 'J&T Express', trackingCode: 'JT-TH-0028941', 
+      lastCheckpoint: 'Out for Delivery - On courier route', status: 'Out for Delivery',
+      milestones: [
+        { time: '2026-07-16 08:30', detail: 'Out for delivery with J&T rider.' },
+        { time: '2026-07-15 23:45', detail: 'Arrived at distribution station Nonthaburi.' },
+        { time: '2026-07-15 13:00', detail: 'Parcel picked up by courier.' }
+      ]
+    },
+    { 
+      orderId: 'ORD-2026-9903', platform: 'TikTok', carrier: 'Kerry Logistics', trackingCode: 'KER-TH-8890182', 
+      lastCheckpoint: 'In Transit - Arrived at Central Hub', status: 'In Transit',
+      milestones: [
+        { time: '2026-07-16 11:20', detail: 'Arrived at Central Sorting Hub (Bangkok).' },
+        { time: '2026-07-15 17:30', detail: 'Dispatched from origin warehouse.' },
+        { time: '2026-07-15 11:00', detail: 'Courier pickup scheduled.' }
+      ]
+    },
+    { 
+      orderId: 'ORD-2026-9904', platform: 'Shopee', carrier: 'Ninja Van', trackingCode: 'NJV-TH-7789012', 
+      lastCheckpoint: 'Pending Pickup - Manifest created', status: 'Pending Pickup',
+      milestones: [
+        { time: '2026-07-16 09:00', detail: 'Shipment manifest registered. Pending pickup handover.' }
+      ]
+    },
+    { 
+      orderId: 'ORD-2026-9905', platform: 'Lazada', carrier: 'Flash Express', trackingCode: 'TH-FL-1102983', 
+      lastCheckpoint: 'Delivered - Left at receptionist', status: 'Delivered',
+      milestones: [
+        { time: '2026-07-16 12:15', detail: 'Delivered successfully. Left at lobby frontdesk.' },
+        { time: '2026-07-15 08:00', detail: 'Out for delivery.' },
+        { time: '2026-07-14 20:00', detail: 'Arrived at hub.' }
+      ]
+    },
+    { 
+      orderId: 'ORD-2026-9906', platform: 'TikTok', carrier: 'J&T Express', trackingCode: 'JT-TH-9902810', 
+      lastCheckpoint: 'Failed - Delivery exception: Closed business', status: 'Failed / Returned',
+      milestones: [
+        { time: '2026-07-16 15:40', detail: 'Delivery failed: Business closed. Will re-attempt.' }
+      ]
+    }
+  ];
+
+  // Inbound Customer Returns Mock Data
+  let returnsLedgerItems = [
+    { 
+      orderId: 'ORD-2026-9902', platform: 'Lazada', item: 'Premium Cotton Red T-Shirt x1', sku: 'FIN-TSHIRT-RED', 
+      reason: 'Wrong size selected', carrierCode: 'J&T (RET-JT-902)', status: 'In Transit' 
+    },
+    { 
+      orderId: 'ORD-2026-9906', platform: 'TikTok', item: 'Classic Warm Black Hoodie x1', sku: 'FIN-HOODIE-BLK', 
+      reason: 'Defective zipper', carrierCode: 'Flash (RET-FL-104)', status: 'Awaiting Inspection' 
+    },
+    { 
+      orderId: 'ORD-2026-9907', platform: 'Shopee', item: 'Premium Cotton Red T-Shirt x1', sku: 'FIN-TSHIRT-RED', 
+      reason: 'Damaged package', carrierCode: 'Kerry (RET-KE-552)', status: 'Awaiting Inspection' 
+    }
+  ];
+
+  // Selectors
+  const shipSubtabOutbound = document.getElementById('ship-subtab-outbound');
+  const shipSubtabReturns = document.getElementById('ship-subtab-returns');
+  const shipViewOutbound = document.getElementById('ship-view-outbound');
+  const shipViewReturns = document.getElementById('ship-view-returns');
+
+  const shipTableBody = document.getElementById('ship-table-body');
+  const returnsTableBody = document.getElementById('returns-table-body');
+
+  const shipSearch = document.getElementById('ship-search');
+  const shipCarrierFilter = document.getElementById('ship-carrier-filter');
+  const shipFilterShopee = document.getElementById('ship-filter-shopee');
+  const shipFilterLazada = document.getElementById('ship-filter-lazada');
+  const shipFilterTiktok = document.getElementById('ship-filter-tiktok');
+
+  // Subtab switching
+  if (shipSubtabOutbound && shipSubtabReturns) {
+    shipSubtabOutbound.addEventListener('click', () => {
+      shipSubtabOutbound.classList.add('active');
+      shipSubtabReturns.classList.remove('active');
+      shipViewOutbound.classList.add('active');
+      shipViewReturns.classList.remove('active');
+    });
+
+    shipSubtabReturns.addEventListener('click', () => {
+      shipSubtabReturns.classList.add('active');
+      shipSubtabOutbound.classList.remove('active');
+      shipViewReturns.classList.add('active');
+      shipViewOutbound.classList.remove('active');
+    });
+  }
+
+  // Renders Outbound shipping grid
+  function renderShippingProgress(items = shippingItems) {
+    if (!shipTableBody) return;
+    shipTableBody.innerHTML = '';
+
+    if (items.length === 0) {
+      shipTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--color-text-muted);">No outbound shipments match criteria.</td></tr>`;
+      return;
+    }
+
+    items.forEach(item => {
+      const tr = document.createElement('tr');
+      let badgeStyle = "background: rgba(245, 158, 11, 0.1); color: var(--color-warning);";
+      if (item.status === 'Delivered') badgeStyle = "background: rgba(16, 185, 129, 0.1); color: var(--color-success);";
+      else if (item.status === 'Failed / Returned') badgeStyle = "background: rgba(239, 68, 68, 0.1); color: var(--color-error);";
+      else if (item.status === 'Out for Delivery') badgeStyle = "background: rgba(139, 92, 246, 0.1); color: #8b5cf6;";
+      else if (item.status === 'Pending Pickup') badgeStyle = "background: rgba(59, 130, 246, 0.1); color: #3b82f6;";
+
+      tr.innerHTML = `
+        <td style="font-weight:600; color:var(--color-text-main);">${item.orderId}</td>
+        <td>${item.platform} TH</td>
+        <td>${item.carrier}</td>
+        <td style="font-family:monospace; font-weight:500;">${item.trackingCode}</td>
+        <td style="font-size:0.7rem; color:var(--color-text-muted);">${item.lastCheckpoint}</td>
+        <td style="text-align:center;"><span class="status-badge" style="${badgeStyle} border-radius:6px; padding:0.2rem 0.4rem; font-weight:600; font-size:0.65rem;">${item.status}</span></td>
+        <td style="text-align:center;"><button class="btn btn-secondary" style="padding:0.25rem 0.5rem; font-size:0.65rem; margin:0;" onclick="trackParcel('${item.orderId}')">Track</button></td>
+      `;
+      shipTableBody.appendChild(tr);
+    });
+
+    // Recalculate metrics
+    let transit = 0;
+    let out = 0;
+    let deliv = 0;
+    items.forEach(item => {
+      if (item.status === 'In Transit' || item.status === 'Pending Pickup') transit++;
+      if (item.status === 'Out for Delivery') out++;
+      if (item.status === 'Delivered') deliv++;
+    });
+
+    document.getElementById('ship-transit-count').textContent = transit;
+    document.getElementById('ship-outfordelivery-count').textContent = out;
+    document.getElementById('ship-delivered-count').textContent = deliv;
+  }
+
+  // Renders Inbound returns grid
+  function renderReturnsLedger() {
+    if (!returnsTableBody) return;
+    returnsTableBody.innerHTML = '';
+
+    if (returnsLedgerItems.length === 0) {
+      returnsTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--color-text-muted);">No customer return records.</td></tr>`;
+      return;
+    }
+
+    returnsLedgerItems.forEach(item => {
+      const tr = document.createElement('tr');
+      let statusStyle = "background: rgba(245, 158, 11, 0.1); color: var(--color-warning);";
+      if (item.status === 'Refund Processed') statusStyle = "background: rgba(16, 185, 129, 0.1); color: var(--color-success);";
+      else if (item.status === 'Rejected') statusStyle = "background: rgba(239, 68, 68, 0.1); color: var(--color-error);";
+
+      let actionButton = '';
+      if (item.status === 'Awaiting Inspection') {
+        actionButton = `<button class="btn btn-primary" style="padding:0.25rem 0.5rem; font-size:0.65rem; margin:0; background:var(--color-secondary); border-color:var(--color-secondary);" onclick="openReturnInspection('${item.orderId}')">Inspect & Process</button>`;
+      } else {
+        actionButton = `<span style="font-size:0.65rem; color:var(--color-text-muted);">Audit Complete</span>`;
+      }
+
+      tr.innerHTML = `
+        <td style="font-weight:600; color:var(--color-text-main);">${item.orderId}</td>
+        <td>${item.platform} TH</td>
+        <td style="font-weight:500;">${item.item}</td>
+        <td style="font-size:0.7rem; color:var(--color-error);">${item.reason}</td>
+        <td style="font-family:monospace; font-size:0.7rem;">${item.carrierCode}</td>
+        <td><span class="status-badge" style="${statusStyle} border-radius:6px; padding:0.2rem 0.4rem; font-weight:600; font-size:0.65rem;">${item.status}</span></td>
+        <td style="text-align:center;">${actionButton}</td>
+      `;
+      returnsTableBody.appendChild(tr);
+    });
+
+    // Update returns metrics
+    let pendInspect = 0;
+    let returnsTransit = 0;
+    let refunded = 0;
+    returnsLedgerItems.forEach(item => {
+      if (item.status === 'Awaiting Inspection') pendInspect++;
+      if (item.status === 'In Transit') returnsTransit++;
+      if (item.status === 'Refund Processed') refunded++;
+    });
+
+    document.getElementById('returns-pending-count').textContent = pendInspect;
+    document.getElementById('returns-transit-count').textContent = returnsTransit;
+    document.getElementById('returns-refunded-count').textContent = refunded;
+  }
+
+  // Opens timeline parcel tracking modal
+  window.trackParcel = function(orderId) {
+    const item = shippingItems.find(s => s.orderId === orderId);
+    if (!item) return;
+
+    document.getElementById('track-modal-code').textContent = item.trackingCode;
+    document.getElementById('track-modal-carrier').textContent = item.carrier;
+    
+    const badgeContainer = document.getElementById('track-modal-status-badge');
+    let statusText = item.status;
+    let badgeStyle = "background: rgba(245, 158, 11, 0.1); color: var(--color-warning);";
+    if (item.status === 'Delivered') badgeStyle = "background: rgba(16, 185, 129, 0.1); color: var(--color-success);";
+    else if (item.status === 'Failed / Returned') badgeStyle = "background: rgba(239, 68, 68, 0.1); color: var(--color-error);";
+    else if (item.status === 'Out for Delivery') badgeStyle = "background: rgba(139, 92, 246, 0.1); color: #8b5cf6;";
+    else if (item.status === 'Pending Pickup') badgeStyle = "background: rgba(59, 130, 246, 0.1); color: #3b82f6;";
+
+    badgeContainer.innerHTML = `<span class="status-badge" style="${badgeStyle} font-weight: 600; font-size: 0.75rem; padding: 0.25rem 0.5rem; border-radius: 8px;">${statusText}</span>`;
+
+    const timelineContainer = document.getElementById('track-modal-timeline');
+    timelineContainer.innerHTML = '';
+
+    item.milestones.forEach((m, idx) => {
+      const step = document.createElement('div');
+      step.style.position = 'relative';
+      step.style.marginBottom = '0.5rem';
+
+      const dotColor = idx === 0 ? 'var(--color-primary)' : '#cbd5e1';
+      const dot = `<span style="position: absolute; left: -26px; top: 4px; width: 10px; height: 10px; border-radius: 50%; background: ${dotColor}; border: 2px solid #fff;"></span>`;
+
+      step.innerHTML = `
+        ${dot}
+        <div style="font-size:0.65rem; color:var(--color-text-muted); font-weight:600;">${m.time}</div>
+        <div style="font-size:0.75rem; color:var(--color-text-main); font-weight:${idx === 0 ? '600' : '400'}; margin-top:0.15rem;">${m.detail}</div>
+      `;
+      timelineContainer.appendChild(step);
+    });
+
+    document.getElementById('shipping-track-modal').classList.add('active');
+  };
+
+  // Close timeline modal
+  const shipTrackClose = document.getElementById('shipping-track-close');
+  if (shipTrackClose) {
+    shipTrackClose.addEventListener('click', () => {
+      document.getElementById('shipping-track-modal').classList.remove('active');
+    });
+  }
+
+  // Opens return quality inspection modal
+  let activeInspectOrderId = '';
+  window.openReturnInspection = function(orderId) {
+    const item = returnsLedgerItems.find(r => r.orderId === orderId);
+    if (!item) return;
+
+    activeInspectOrderId = orderId;
+    document.getElementById('inspect-modal-order').textContent = item.orderId;
+    document.getElementById('inspect-modal-item').textContent = item.item;
+    document.getElementById('inspect-modal-reason').textContent = item.reason;
+
+    // Reset checklist boxes
+    document.getElementById('chk-inspect-packaging').checked = false;
+    document.getElementById('chk-inspect-sku').checked = false;
+    document.getElementById('chk-inspect-wear').checked = false;
+
+    document.getElementById('return-inspect-modal').classList.add('active');
+  };
+
+  // Close inspection modal
+  const returnInspectClose = document.getElementById('return-inspect-close');
+  if (returnInspectClose) {
+    returnInspectClose.addEventListener('click', () => {
+      document.getElementById('return-inspect-modal').classList.remove('active');
+    });
+  }
+
+  // Verification Form Submit (Approve & Restock)
+  const returnVerificationForm = document.getElementById('return-verification-form');
+  if (returnVerificationForm) {
+    returnVerificationForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      
+      const item = returnsLedgerItems.find(r => r.orderId === activeInspectOrderId);
+      if (!item) return;
+
+      // Update return ledger status
+      item.status = 'Refund Processed';
+
+      // restock inventory items dynamically
+      const targetSku = item.sku;
+      const invItem = inventoryItems.find(i => i.sku === targetSku);
+      if (invItem) {
+        invItem.stock = invItem.stock + 1;
+        renderInventoryTable();
+        alert(`Verification Passed!\nRefund of order has been processed to customer.\n1 unit of "${invItem.name}" restocked to inventory successfully (New stock: ${invItem.stock}).`);
+      } else {
+        alert('Verification Passed! Refund of order processed.');
+      }
+
+      document.getElementById('return-inspect-modal').classList.remove('active');
+      renderReturnsLedger();
+    });
+  }
+
+  // Reject Claim button click
+  const btnRejectReturn = document.getElementById('btn-reject-return');
+  if (btnRejectReturn) {
+    btnRejectReturn.addEventListener('click', () => {
+      if (confirm('Are you sure you want to reject this return claim? Customer will be notified of packaging dispute.')) {
+        const item = returnsLedgerItems.find(r => r.orderId === activeInspectOrderId);
+        if (item) {
+          item.status = 'Rejected';
+        }
+        document.getElementById('return-inspect-modal').classList.remove('active');
+        renderReturnsLedger();
+        alert('Claim Rejected. Return package flagged for dispute resolution.');
+      }
+    });
+  }
+
+  // Outbound filter logic
+  function filterShipping() {
+    const query = shipSearch ? shipSearch.value.trim().toLowerCase() : '';
+    const carrierVal = shipCarrierFilter ? shipCarrierFilter.value : 'ALL';
+    const showShopee = shipFilterShopee ? shipFilterShopee.checked : true;
+    const showLazada = shipFilterLazada ? shipFilterLazada.checked : true;
+    const showTiktok = shipFilterTiktok ? shipFilterTiktok.checked : true;
+
+    const filtered = shippingItems.filter(item => {
+      const matchQuery = item.orderId.toLowerCase().includes(query) || item.trackingCode.toLowerCase().includes(query);
+      const matchCarrier = (carrierVal === 'ALL' || item.carrier === carrierVal);
+      
+      let matchPlatform = false;
+      if (item.platform === 'Shopee' && showShopee) matchPlatform = true;
+      if (item.platform === 'Lazada' && showLazada) matchPlatform = true;
+      if (item.platform === 'TikTok' && showTiktok) matchPlatform = true;
+
+      return matchQuery && matchCarrier && matchPlatform;
+    });
+
+    renderShippingProgress(filtered);
+  }
+
+  if (shipSearch) shipSearch.addEventListener('input', filterShipping);
+  if (shipCarrierFilter) shipCarrierFilter.addEventListener('change', filterShipping);
+  if (shipFilterShopee) shipFilterShopee.addEventListener('change', filterShipping);
+  if (shipFilterLazada) shipFilterLazada.addEventListener('change', filterShipping);
+  if (shipFilterTiktok) shipFilterTiktok.addEventListener('change', filterShipping);
+
+  // Initial renders
+  renderShippingProgress();
+  renderReturnsLedger();
 });

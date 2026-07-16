@@ -175,3 +175,31 @@ This document provides Cucumber-style BDD features designed to run with `behave`
     Then the table shows only 1 row matching the Order ID
     And all other mismatching rows are hidden
 
+---
+
+## Feature: Daily Shipping & Returns Tracking Ledger
+
+### Scenario: Filtering Outbound Shipments by Logistics Carrier
+    Given the user is on the "Shipping Progress" ledger tab
+    And selects "Outbound Deliveries" sub-tab
+    When the user selects "Flash Express" in the carrier filter dropdown
+    Then only shipments using Flash Express are displayed in the list
+    And all other carrier rows are hidden
+
+### Scenario: Tracking Outbound Parcel Milestones
+    Given the user is on the "Shipping Progress" ledger tab
+    When the user clicks "Track" next to Order ID "ORD-2026-9901"
+    Then the "Shipment Milestones" modal overlays on the screen
+    And the modal displays the tracking code "TH-FL-8890281"
+    And displays the vertical progress checkpoints list
+
+### Scenario: Verifying Customer Returns & Auto-Restocking
+    Given the user is on the "Shipping Progress" ledger tab
+    And selects "Inbound Returns & Tasks" sub-tab
+    And selects order "ORD-2026-9906" with status "Awaiting Inspection"
+    When the user clicks "Inspect & Process"
+    Then the "Verify Buyer Return Request" checklist modal displays
+    When the user checks all three quality criteria boxes
+    And clicks "Approve & Restock"
+    Then the system updates the return status to "Refund Processed"
+    And the inventory stock count of "FIN-HOODIE-BLK" increases by 1 unit
