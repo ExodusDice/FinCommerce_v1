@@ -1133,6 +1133,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
+  window.downloadSampleTemplate = function() {
+    const headers = "master_sku,product_name,cost_price,selling_price,stock_level,shopee_sku,lazada_sku,tiktok_sku\n" +
+                    "FIN-TSHIRT-RED,Premium Cotton Red T-Shirt,120.00,250.00,100,SH-RED-T,LZ-RED-T,TT-RED-T\n" +
+                    "FIN-HOODIE-BLK,Classic Warm Black Hoodie,350.00,790.00,50,SH-BLK-H,LZ-BLK-H,TT-BLK-H";
+    const blob = new Blob([headers], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.setAttribute('download', 'fincommerce_batch_template.csv');
+    a.click();
+  };
+
   window.revokeSession = function(sessionId) {
     const element = document.getElementById(sessionId);
     if (!element) return;

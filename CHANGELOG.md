@@ -13,6 +13,7 @@ All notable changes to the **FinCommerce** project will be documented in this fi
 - **Platform Sync Checkboxes**: Integrated Shopee, Lazada, and TikTok target sync checkboxes into the single Create/Edit/Delete modals and the Bulk Excel Upload panel.
 - **Excel Drop Upload Handling**: Added excel drop zone handlers that simulate parsing row columns (`master_sku`, `stock_level`, etc.) and redirect merchants back to the inventory list.
 - **WPS Office User Manual Update**: Extended `User_Manual.md` and `User_Manual.docx` to document single CRUD actions, batch templates, and column type maps.
+- **Dashboard In-App User Guide**: Integrated the Batch Upload User Guide card with column structure descriptions and a dynamic template download button directly into the Batch Upload Listing dashboard panel.
 
 ---
 

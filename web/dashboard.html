@@ -658,7 +658,101 @@
               </div>
             </div>
 
+            </div>
+
           </div>
+
+          <!-- Batch Upload User Guide & Excel Template Schema -->
+          <div class="metric-card" style="margin-top: 1rem;">
+            <h3 style="font-size: 0.95rem; margin-bottom: 0.5rem; color: var(--color-primary); display: flex; align-items: center; gap: 0.4rem;">
+              <span>📋</span> Batch Upload Template Instructions
+            </h3>
+            <p style="font-size: 0.75rem; color: var(--color-text-muted); margin-bottom: 0.75rem;">
+              Please format your catalog Excel/CSV document with the exact column headers shown below before dragging it into the upload box:
+            </p>
+            
+            <div class="data-table-container" style="margin-bottom: 0.75rem; max-height: 160px; overflow-y: auto;">
+              <table class="data-table" style="font-size: 0.75rem;">
+                <thead>
+                  <tr>
+                    <th>Header Column</th>
+                    <th>Data Type</th>
+                    <th>Required</th>
+                    <th>Sample Entry</th>
+                    <th>Mapping Action & Rules</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">master_sku</td>
+                    <td>String</td>
+                    <td>Yes</td>
+                    <td><code>FIN-T-RED</code></td>
+                    <td>Central unique SKU map key. Used to sync stock adjustments.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">product_name</td>
+                    <td>String</td>
+                    <td>Yes</td>
+                    <td><code>Premium Red T-Shirt</code></td>
+                    <td>Display title used when creating listings.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">cost_price</td>
+                    <td>Decimal</td>
+                    <td>Yes</td>
+                    <td><code>150.00</code></td>
+                    <td>Cost of goods (COGS) used for margin alerts.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">selling_price</td>
+                    <td>Decimal</td>
+                    <td>Yes</td>
+                    <td><code>299.00</code></td>
+                    <td>Listing price published to selected shop fronts.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">stock_level</td>
+                    <td>Integer</td>
+                    <td>Yes</td>
+                    <td><code>142</code></td>
+                    <td>Physical warehouse inventory count to allocate.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">shopee_sku</td>
+                    <td>String</td>
+                    <td>No</td>
+                    <td><code>SH-RED-T</code></td>
+                    <td>Optional custom mapping ID on Shopee front.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">lazada_sku</td>
+                    <td>String</td>
+                    <td>No</td>
+                    <td><code>LZ-RED-T</code></td>
+                    <td>Optional custom mapping ID on Lazada front.</td>
+                  </tr>
+                  <tr>
+                    <td style="font-weight:600; color:var(--color-text-main);">tiktok_sku</td>
+                    <td>String</td>
+                    <td>No</td>
+                    <td><code>TT-RED-T</code></td>
+                    <td>Optional custom mapping ID on TikTok front.</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.5rem;">
+              <span style="font-size: 0.75rem; color: var(--color-text-muted);">
+                💡 Tip: Download our empty spreadsheet, fill in your product catalog, select target shops above, and upload.
+              </span>
+              <button type="button" class="btn btn-secondary" style="width: auto; padding: 0.35rem 0.75rem; font-size: 0.75rem; margin: 0; display: flex; align-items: center; gap: 0.3rem;" onclick="downloadSampleTemplate()">
+                <span>📥</span> Download Template (.csv)
+              </button>
+            </div>
+          </div>
+
         </div>
 
         <!-- Panel 4: Store Connections -->
