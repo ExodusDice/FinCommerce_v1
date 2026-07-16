@@ -405,6 +405,9 @@
           <li class="menu-item" data-target="panel-billing">
             <button>💳 Billing & Plans</button>
           </li>
+          <li class="menu-item" data-target="panel-payments">
+            <button>💰 Payment Tracking</button>
+          </li>
           <li class="menu-item" data-target="panel-profile">
             <button>👤 Merchant Profile</button>
           </li>
@@ -914,6 +917,85 @@
                 </ul>
               </div>
               <button class="btn btn-primary" style="margin: 0; width: 100%;" id="billing-upgrade-advance">Upgrade to Advance</button>
+            </div>
+        <!-- Panel 8: Payment Tracking Ledger -->
+        <div id="panel-payments" class="dashboard-panel">
+          <div style="margin-bottom: 1.25rem;">
+            <h2 style="font-size: 1.25rem; font-weight: 600; color: var(--color-text-main);">Payment Tracking Ledger</h2>
+            <p style="font-size: 0.8rem; color: var(--color-text-muted);">Monitor expected payouts, platform fees deductions, and settlement status across connected shops.</p>
+          </div>
+
+          <!-- Summaries -->
+          <div class="metrics-grid" style="margin-bottom: 1rem;">
+            <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-warning); padding: 1rem;">
+              <h4 style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Total Pending Settlement</h4>
+              <div class="value" style="font-size: 1.4rem; font-weight: 700; color: var(--color-text-main);" id="ledger-pending-amount">฿12,450.00</div>
+              <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.2rem;">Holds: ฿1,200.00 due to disputes</div>
+            </div>
+            <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-primary); padding: 1rem;">
+              <h4 style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Next Expected Release</h4>
+              <div class="value" style="font-size: 1.4rem; font-weight: 700; color: var(--color-text-main);">2026-07-20</div>
+              <div style="font-size: 0.7rem; color: var(--color-success); margin-top: 0.2rem;">✓ Bank transfer webhook confirmed</div>
+            </div>
+            <div class="metric-card" style="background: #ffffff; border-left: 4px solid var(--color-success); padding: 1rem;">
+              <h4 style="font-size: 0.8rem; color: var(--color-text-muted); margin-bottom: 0.25rem;">Settled Payouts (MTD)</h4>
+              <div class="value" style="font-size: 1.4rem; font-weight: 700; color: var(--color-text-main);">฿214,915.00</div>
+              <div style="font-size: 0.7rem; color: var(--color-text-muted); margin-top: 0.2rem;">Paid to SCB Account ending 0841</div>
+            </div>
+          </div>
+
+          <!-- Filters Card -->
+          <div class="metric-card" style="background: #ffffff; padding: 1rem; margin-bottom: 1rem;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <div style="display: flex; gap: 0.5rem; flex: 1; min-width: 250px;">
+                <input type="text" id="ledger-search" class="form-input" style="padding: 0.45rem 0.85rem; font-size: 0.8rem; max-width: 250px;" placeholder="Search Order ID...">
+                <select id="ledger-status-filter" class="form-input" style="max-width: 150px; padding: 0.45rem; font-size: 0.8rem;">
+                  <option value="ALL">All Statuses</option>
+                  <option value="Settled">Settled</option>
+                  <option value="Pending">Pending</option>
+                  <option value="On Hold">On Hold</option>
+                </select>
+              </div>
+              <div style="display: flex; gap: 0.75rem; align-items: center; flex-wrap: wrap;">
+                <span style="font-size: 0.75rem; font-weight: 600; color: var(--color-text-muted);">Shop Filters:</span>
+                <label class="checkbox-container" style="font-size: 0.75rem; margin: 0;">
+                  <input type="checkbox" checked id="ledger-filter-shopee">
+                  <span class="checkmark" style="width: 14px; height: 14px; margin-right: 0.25rem;"></span>
+                  Shopee
+                </label>
+                <label class="checkbox-container" style="font-size: 0.75rem; margin: 0;">
+                  <input type="checkbox" checked id="ledger-filter-lazada">
+                  <span class="checkmark" style="width: 14px; height: 14px; margin-right: 0.25rem;"></span>
+                  Lazada
+                </label>
+                <label class="checkbox-container" style="font-size: 0.75rem; margin: 0;">
+                  <input type="checkbox" checked id="ledger-filter-tiktok">
+                  <span class="checkmark" style="width: 14px; height: 14px; margin-right: 0.25rem;"></span>
+                  TikTok
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Main Table Card -->
+          <div class="metric-card" style="background: #ffffff; padding: 1.25rem;">
+            <div class="data-table-container" style="max-height: 250px; overflow-y: auto;">
+              <table class="data-table" style="font-size: 0.75rem;">
+                <thead>
+                  <tr>
+                    <th>Order ID</th>
+                    <th>Platform</th>
+                    <th>Expected Payout Date</th>
+                    <th>Gross Amount</th>
+                    <th>Fees Deducted</th>
+                    <th>Net Settlement</th>
+                    <th style="text-align: center;">Payout Status</th>
+                  </tr>
+                </thead>
+                <tbody id="ledger-table-body">
+                  <!-- Dynamic ledger rows populated by app.js -->
+                </tbody>
+              </table>
             </div>
           </div>
         </div>

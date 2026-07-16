@@ -1649,4 +1649,107 @@ document.addEventListener('DOMContentLoaded', () => {
             • <em>"how to connect stores"</em><br>
             • <em>"pricing plans"</em>`;
   }
+
+  // ==========================================
+  // SECTION 7: PAYMENT/PAYOUT TRACKING LEDGER
+  // ==========================================
+
+  let payoutLedgerItems = [
+    { orderId: 'ORD-2026-9901', platform: 'Shopee', payoutDate: '2026-07-18', gross: 550.00, fees: 38.50, status: 'Settled' },
+    { orderId: 'ORD-2026-9902', platform: 'Lazada', payoutDate: '2026-07-20', gross: 1200.00, fees: 96.00, status: 'Pending' },
+    { orderId: 'ORD-2026-9903', platform: 'TikTok', payoutDate: '2026-07-21', gross: 450.00, fees: 22.50, status: 'Pending' },
+    { orderId: 'ORD-2026-9904', platform: 'Shopee', payoutDate: '2026-07-22', gross: 890.00, fees: 62.30, status: 'Pending' },
+    { orderId: 'ORD-2026-9905', platform: 'Lazada', payoutDate: '2026-07-15', gross: 1500.00, fees: 120.00, status: 'Settled' },
+    { orderId: 'ORD-2026-9906', platform: 'TikTok', payoutDate: '2026-07-23', gross: 690.00, fees: 34.50, status: 'On Hold' },
+    { orderId: 'ORD-2026-9907', platform: 'Shopee', payoutDate: '2026-07-24', gross: 310.00, fees: 21.70, status: 'Pending' }
+  ];
+
+  const ledgerTableBody = document.getElementById('ledger-table-body');
+  const ledgerSearch = document.getElementById('ledger-search');
+  const ledgerStatusFilter = document.getElementById('ledger-status-filter');
+  
+  const ledgerFilterShopee = document.getElementById('ledger-filter-shopee');
+  const ledgerFilterLazada = document.getElementById('ledger-filter-lazada');
+  const ledgerFilterTiktok = document.getElementById('ledger-filter-tiktok');
+  
+  const ledgerPendingAmount = document.getElementById('ledger-pending-amount');
+
+  function renderPayoutLedger(items = payoutLedgerItems) {
+    if (!ledgerTableBody) return;
+    ledgerTableBody.innerHTML = '';
+
+    if (items.length === 0) {
+      ledgerTableBody.innerHTML = `<tr><td colspan="7" style="text-align:center; padding:1.5rem; color:var(--color-text-muted);">No transaction payouts match criteria.</td></tr>`;
+      return;
+    }
+
+    items.forEach(item => {
+      const net = item.gross - item.fees;
+      const tr = document.createElement('tr');
+
+      let statusBadge = '';
+      if (item.status === 'Settled') {
+        statusBadge = `<span class="status-badge" style="background: rgba(16, 185, 129, 0.1); color: var(--color-success); border-color: rgba(16, 185, 129, 0.2); font-weight:600; font-size:0.7rem; padding:0.2rem 0.4rem; border-radius:6px;">Settled</span>`;
+      } else if (item.status === 'Pending') {
+        statusBadge = `<span class="status-badge" style="background: rgba(245, 158, 11, 0.1); color: var(--color-warning); border-color: rgba(245, 158, 11, 0.2); font-weight:600; font-size:0.7rem; padding:0.2rem 0.4rem; border-radius:6px;">Pending</span>`;
+      } else {
+        statusBadge = `<span class="status-badge" style="background: rgba(239, 68, 68, 0.1); color: var(--color-error); border-color: rgba(239, 68, 68, 0.2); font-weight:600; font-size:0.7rem; padding:0.2rem 0.4rem; border-radius:6px;">On Hold</span>`;
+      }
+
+      tr.innerHTML = `
+        <td style="font-weight:600; color:var(--color-text-main);">${item.orderId}</td>
+        <td style="font-weight:500;">${item.platform} TH</td>
+        <td>${item.payoutDate}</td>
+        <td>฿${item.gross.toFixed(2)}</td>
+        <td style="color:var(--color-error);">-฿${item.fees.toFixed(2)}</td>
+        <td style="font-weight:600; color:var(--color-success);">฿${net.toFixed(2)}</td>
+        <td style="text-align: center;">${statusBadge}</td>
+      `;
+
+      ledgerTableBody.appendChild(tr);
+    });
+
+    // Re-aggregate pending payouts sum based on filtered rows
+    let pendingSum = 0;
+    items.forEach(item => {
+      if (item.status === 'Pending') {
+        pendingSum += (item.gross - item.fees);
+      }
+    });
+    if (ledgerPendingAmount) {
+      ledgerPendingAmount.textContent = '฿' + pendingSum.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    }
+  }
+
+  function filterLedger() {
+    const query = ledgerSearch ? ledgerSearch.value.trim().toLowerCase() : '';
+    const statusVal = ledgerStatusFilter ? ledgerStatusFilter.value : 'ALL';
+    
+    const showShopee = ledgerFilterShopee ? ledgerFilterShopee.checked : true;
+    const showLazada = ledgerFilterLazada ? ledgerFilterLazada.checked : true;
+    const showTiktok = ledgerFilterTiktok ? ledgerFilterTiktok.checked : true;
+
+    const filtered = payoutLedgerItems.filter(item => {
+      const matchQuery = item.orderId.toLowerCase().includes(query);
+      const matchStatus = (statusVal === 'ALL' || item.status === statusVal);
+      
+      let matchPlatform = false;
+      if (item.platform === 'Shopee' && showShopee) matchPlatform = true;
+      if (item.platform === 'Lazada' && showLazada) matchPlatform = true;
+      if (item.platform === 'TikTok' && showTiktok) matchPlatform = true;
+
+      return matchQuery && matchStatus && matchPlatform;
+    });
+
+    renderPayoutLedger(filtered);
+  }
+
+  if (ledgerSearch) ledgerSearch.addEventListener('input', filterLedger);
+  if (ledgerStatusFilter) ledgerStatusFilter.addEventListener('change', filterLedger);
+  if (ledgerFilterShopee) ledgerFilterShopee.addEventListener('change', filterLedger);
+  if (ledgerFilterLazada) ledgerFilterLazada.addEventListener('change', filterLedger);
+  if (ledgerFilterTiktok) ledgerFilterTiktok.addEventListener('change', filterLedger);
+
+  // Initial ledger rendering
+  renderPayoutLedger();
 });

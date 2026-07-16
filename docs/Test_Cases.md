@@ -158,3 +158,20 @@ This document provides Cucumber-style BDD features designed to run with `behave`
       | Basic        | blocked with warning "Cancel subscription first" |
       | Advance      | blocked with warning "Cancel subscription first" |
       | Free         | prompts password challenge then deletes account |
+
+---
+
+## Feature: Payment/Payout Tracking Ledger
+
+### Scenario: Filtering Payouts by Channel Shop
+    Given the user is on the "Payment Tracking" ledger tab
+    When the user unchecks the "Lazada" channel checkbox
+    Then all Lazada transaction rows are hidden from the ledger table
+    And the "Total Pending Settlement" sum card is updated to exclude Lazada net amounts
+
+### Scenario: Searching Payouts by Order ID
+    Given the user is on the "Payment Tracking" ledger tab
+    When the user types "ORD-2026-9902" in the search box
+    Then the table shows only 1 row matching the Order ID
+    And all other mismatching rows are hidden
+

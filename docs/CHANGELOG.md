@@ -15,6 +15,7 @@ All notable changes to the **FinCommerce** project will be documented in this fi
 - **WPS Office User Manual Update**: Extended `User_Manual.md` and `User_Manual.docx` to document single CRUD actions, batch templates, and column type maps.
 - **Dashboard In-App User Guide**: Integrated the Batch Upload User Guide card with column structure descriptions and a dynamic template download button directly into the Batch Upload Listing dashboard panel.
 - **Merchant Profile & Postpaid Billing Settings**: Implemented split first/last name inputs, postpaid plan selection, active payment method selectors, subscription cancellation hooks, and conditional deletion rules (blocks account deletion unless active plan is Free).
+- **Payment/Payout Tracking Ledger**: Added a dedicated Payment Tracking sidebar tab listing expected payouts, platform fees deductions, and net settlements with live platform exclusions and status filtering.
 
 ---
 

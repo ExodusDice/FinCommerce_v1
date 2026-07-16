@@ -96,10 +96,32 @@ To stop future postpaid billing cycles:
 3. The system immediately downgrades your account to the **Free Tier**, resets the payment method to **None**, and restricts your catalog to 1 linked store and 10 SKUs. Outstanding usage charges for the current cycle will be invoiced at the end of the month.
 
 ### 5.4 Deleting Merchant Account (Conditional Block)
-To permanently remove your tenant workspace and delete your account:
 1. Ensure your subscription has been **cancelled** (the account must be on the **Free Tier**).
 2. Click **Delete Merchant Account** under **Account Deletion**.
 3. **If you have a paid subscription (Basic/Advance)**: The system blocks deletion with a warning. You must cancel the active plan first.
 4. **If on the Free Tier**: The system prompts for security password verification. Once confirmed, your workspace is deleted, cookies cleared, and you are redirected to the login page.
+
+---
+
+## 6. Payment & Payout Tracking
+Navigate to the **Payment Tracking** tab on the sidebar to audit order settlements, platform commission fees, and scheduled payouts.
+
+### 6.1 Ledger Columns
+* **Order ID**: Platform order identifier (e.g. `ORD-2026-9901`).
+* **Platform**: The connected shop channel origin (Shopee, Lazada, TikTok Shop).
+* **Expected Payout Date**: Projected date the platform settles the order funds into your bank account.
+* **Gross Amount**: Total order sale price paid by the customer.
+* **Fees Deducted**: Platform commissions and transaction processing costs subtracted.
+* **Net Settlement**: Final payout value scheduled for release.
+* **Payout Status**:
+  * `Settled`: Funds successfully paid to your designated bank account (e.g., SCB, KBank).
+  * `Pending`: Awaiting cycle release.
+  * `On Hold`: Settlement paused due to active customer refund disputes or delivery claims.
+
+### 6.2 Searching & Filtering
+1. **Search Query**: Type in the search box to find specific Order IDs.
+2. **Status Dropdown**: Filter transactions by status (`Settled`, `Pending`, `On Hold`).
+3. **Shop Filters**: Check/uncheck Shopee, Lazada, or TikTok checkboxes to include or exclude specific channels. The summary cards will recalculate active balances automatically.
+
 
 
