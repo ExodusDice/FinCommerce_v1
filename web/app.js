@@ -1296,10 +1296,16 @@ document.addEventListener('DOMContentLoaded', () => {
       badge.textContent = `${planName} Tier`;
     }
 
-    // Update Profile Plan details
-    const profilePlan = document.getElementById('profile-plan-name');
-    if (profilePlan) {
-      profilePlan.textContent = `${planName} Plan`;
+    // Update Profile Plan details selectors
+    const planSelect = document.getElementById('profile-plan-select');
+    const paymentSelect = document.getElementById('profile-payment-select');
+    if (planSelect) planSelect.value = planName;
+    if (paymentSelect) {
+      const activeTabId = document.querySelector('#checkout-modal .tab-btn.active')?.id;
+      if (activeTabId === 'pay-tab-qr') paymentSelect.value = 'PromptPay';
+      else if (activeTabId === 'pay-tab-card') paymentSelect.value = 'Credit Card';
+      else if (activeTabId === 'pay-tab-wallet') paymentSelect.value = 'TrueMoney';
+      else paymentSelect.value = 'Credit Card';
     }
 
     // Disable upgrade buttons that were purchased
@@ -1372,12 +1378,78 @@ document.addEventListener('DOMContentLoaded', () => {
   if (profileInfoForm) {
     profileInfoForm.addEventListener('submit', (e) => {
       e.preventDefault();
-      const name = document.getElementById('profile-name').value.trim();
+      const first = document.getElementById('profile-first-name').value.trim();
+      const last = document.getElementById('profile-last-name').value.trim();
       const email = document.getElementById('profile-email').value.trim();
       const phone = document.getElementById('profile-phone').value.trim();
       const company = document.getElementById('profile-company').value.trim();
 
-      alert(`Success: Saved Profile Info!\nName: ${name}\nEmail: ${email}\nPhone: ${phone}\nCompany: ${company}`);
+      alert(`Success: Saved Profile Info!\nName: ${first} ${last}\nEmail: ${email}\nPhone: ${phone}\nCompany: ${company}`);
+    });
+  }
+
+  // Save Billing Info Option
+  const btnSaveBilling = document.getElementById('btn-save-billing');
+  if (btnSaveBilling) {
+    btnSaveBilling.addEventListener('click', () => {
+      const planVal = document.getElementById('profile-plan-select').value;
+      const paymentVal = document.getElementById('profile-payment-select').value;
+
+      // Validate payment choice matching active plans
+      if (planVal !== 'Free' && paymentVal === 'None') {
+        alert('Warning: Please select a valid payment method for your paid postpaid subscription plan.');
+        return;
+      }
+
+      // Sync Top-nav account badge
+      const badge = document.querySelector('.user-profile-badge');
+      if (badge) {
+        badge.textContent = `${planVal} Tier`;
+      }
+
+      alert(`Success: Subscription plan saved!\nBilling Tier: ${planVal} Plan\nPayment Method: ${paymentVal}\nBilling Model: Postpay (Monthly Cycles)`);
+    });
+  }
+
+  // Cancel Subscription Option
+  const btnCancelSub = document.getElementById('btn-cancel-sub');
+  if (btnCancelSub) {
+    btnCancelSub.addEventListener('click', () => {
+      if (confirm('Are you sure you want to cancel your paid subscription? You will be downgraded to the Free Tier immediately.')) {
+        document.getElementById('profile-plan-select').value = 'Free';
+        document.getElementById('profile-payment-select').value = 'None';
+        
+        // Sync badge
+        const badge = document.querySelector('.user-profile-badge');
+        if (badge) {
+          badge.textContent = `Free Tier`;
+        }
+
+        alert('Success: Postpaid subscription cancelled.\nYour merchant workspace has reverted to the Free Tier. Outstanding fees for the active usage cycle will be calculated and invoiced.');
+      }
+    });
+  }
+
+  // Delete Account Option (Conditional)
+  const btnDeleteAccountProfile = document.getElementById('btn-delete-account');
+  if (btnDeleteAccountProfile) {
+    btnDeleteAccountProfile.addEventListener('click', () => {
+      const currentPlan = document.getElementById('profile-plan-select').value;
+
+      if (currentPlan !== 'Free') {
+        alert('Error: Account deletion blocked.\nYou cannot delete your account while you have an active paid subscription. Please cancel your postpaid subscription first.');
+        return;
+      }
+
+      if (confirm('Warning: Are you sure you want to permanently delete your FinCommerce merchant account? All warehouse data and mapping records will be purged immediately.')) {
+        const passwordPrompt = prompt('Please enter your password to confirm identity and complete account deletion:');
+        if (passwordPrompt) {
+          alert('Success: Merchant workspace successfully deleted. Redirecting you back to login portal.');
+          localStorage.clear();
+          // Redirect to login page
+          window.location.href = 'index.html';
+        }
+      }
     });
   }
 

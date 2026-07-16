@@ -14,6 +14,7 @@ All notable changes to the **FinCommerce** project will be documented in this fi
 - **Excel Drop Upload Handling**: Added excel drop zone handlers that simulate parsing row columns (`master_sku`, `stock_level`, etc.) and redirect merchants back to the inventory list.
 - **WPS Office User Manual Update**: Extended `User_Manual.md` and `User_Manual.docx` to document single CRUD actions, batch templates, and column type maps.
 - **Dashboard In-App User Guide**: Integrated the Batch Upload User Guide card with column structure descriptions and a dynamic template download button directly into the Batch Upload Listing dashboard panel.
+- **Merchant Profile & Postpaid Billing Settings**: Implemented split first/last name inputs, postpaid plan selection, active payment method selectors, subscription cancellation hooks, and conditional deletion rules (blocks account deletion unless active plan is Free).
 
 ---
 

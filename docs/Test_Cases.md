@@ -124,9 +124,10 @@ This document provides Cucumber-style BDD features designed to run with `behave`
 
 ## Feature: Merchant Profile Page & Credentials Security
 
-### Scenario: Saving Personal Profile Details
+### Scenario: Saving Personal Profile Details (Split Names)
     Given the user navigates to the "Merchant Profile" panel
-    When the user modifies the full name to "Suchart Suksamran"
+    When the user modifies the first name to "Suchart"
+    And the user modifies the last name to "Suksamran"
     And clicks "Save Profile Details"
     Then the system updates the profile records
     And displays a success banner confirming the save
@@ -137,3 +138,23 @@ This document provides Cucumber-style BDD features designed to run with `behave`
     Then the live security auditor flags "CRITICAL: Password found in public breaches!"
     And disables the change credentials action until a unique password is provided
 
+### Scenario: Cancel Postpaid Subscription
+    Given the user is on the "Merchant Profile" panel
+    And has an active "Basic" plan with "Credit Card" payment method
+    When the user clicks the "Cancel Subscription" button
+    And confirms the cancellation challenge
+    Then the system downgrades the plan to "Free Tier"
+    And resets active payment method to "None"
+    And updates the top-nav account badge to "Free Tier"
+
+### Scenario Outline: Account Deletion Subscription Check
+    Given the user is on the "Merchant Profile" panel
+    And the user's current plan is "<current_plan>"
+    When the user clicks the "Delete Merchant Account" button
+    Then the system action is "<expected_action>"
+
+    Examples:
+      | current_plan | expected_action |
+      | Basic        | blocked with warning "Cancel subscription first" |
+      | Advance      | blocked with warning "Cancel subscription first" |
+      | Free         | prompts password challenge then deletes account |

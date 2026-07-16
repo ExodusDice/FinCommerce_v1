@@ -37,3 +37,17 @@ This test plan defines the validation criteria, threshold limit checks, and feat
 | **TC-ADV-01** | Unlimited Scale Check | Link 5 different shop frontends and create 2,000 Master SKUs. | Catalog rendering, API indexing, and store link nodes show "Active" status without warnings. | Pending |
 | **TC-ADV-02** | Autopilot Sync Check | Trigger stock deductions via Shopee webhook. | Redis queues up commands and instantly pushes updates to Lazada and TikTok Shop in real-time (< 2s). | Pending |
 | **TC-ADV-03** | Strategic Pricing Check| Slide pricing cost variables inside target pricing simulator. | Real-time margin percentages and suggested retail prices recalculate on keystroke without lag. | Pending |
+
+---
+
+## 4. Postpaid Billing & Account Control Operations Testing
+
+### 4.1 Functional Validation Cases
+
+| Test Case ID | Test Category | Action / Steps | Expected Result | Status |
+|:---|:---|:---|:---|:---:|
+| **TC-BILL-01** | Postpaid Cycle Validation | Complete a billing month on Basic/Advance tier. Verify invoice matches active tier rate. | System compiles invoice at the end of month cycle based on usage stats and dispatches to profile billing email. | Pending |
+| **TC-BILL-02** | Cancellation Flow | Click "Cancel Subscription" under Profile. | Plan switches to Free Tier immediately, payment method changes to "None", and API limits downgrade instantly. | Pending |
+| **TC-BILL-03** | Deletion Block check | While on Basic/Advance plan, click "Delete Merchant Account". | Deletion blocks; system displays warning "Cancel subscription first" and blocks inputs. | Pending |
+| **TC-BILL-04** | Deletion Execution | Cancel plan to Free Tier, then click "Delete Merchant Account". Enter credentials. | System deletes data rows, revokes token sessions, and redirects to login portal. | Pending |
+

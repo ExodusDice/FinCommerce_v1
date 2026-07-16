@@ -72,3 +72,34 @@ For fine-grained inventory control, navigate to the **Stock & SKU Mappings** tab
 3. Check the platforms from which you wish to retract listings under **Also Delete Listing Listings On Platform Shops**.
 4. Click **Confirm Delete SKU**. The system removes the central catalog item and issues listing retraction calls to the selected platforms.
 
+---
+
+## 5. Managing Merchant Profile & Postpaid Billing
+Navigate to the **Merchant Profile** tab on the sidebar to adjust security parameters, postpaid subscription plans, and workspace limits.
+
+### 5.1 Editing Profile Identity
+1. Under **Personal Information**, you can modify:
+   * **First Name** and **Last Name** (managed in split inputs for accounting and compliance).
+   * **Email Address** (primary login credential).
+   * **Mobile Phone** (destination for OTP challenge notifications).
+   * **Company Name** (business name for invoice receipts).
+2. Click **Save Profile Details** to update configuration stores.
+
+### 5.2 Subscription Configuration (Postpay Model)
+FinCommerce subscriptions operate under a **Postpay** billing model. Merchants are invoiced at the end of each monthly cycle based on the active plan tier and linked shop nodes count.
+* **Tiers & Payment Method Selection**: You can change your active tier dropdown (Free, Basic, Advance) or select a Payment Method (Credit Card, PromptPay QR Autopay, E-Wallet) and click **Save Billing Info**.
+
+### 5.3 Cancelling Subscription
+To stop future postpaid billing cycles:
+1. Under **Subscription & Billing**, click the **Cancel Subscription** button.
+2. Confirm the action in the validation alert box.
+3. The system immediately downgrades your account to the **Free Tier**, resets the payment method to **None**, and restricts your catalog to 1 linked store and 10 SKUs. Outstanding usage charges for the current cycle will be invoiced at the end of the month.
+
+### 5.4 Deleting Merchant Account (Conditional Block)
+To permanently remove your tenant workspace and delete your account:
+1. Ensure your subscription has been **cancelled** (the account must be on the **Free Tier**).
+2. Click **Delete Merchant Account** under **Account Deletion**.
+3. **If you have a paid subscription (Basic/Advance)**: The system blocks deletion with a warning. You must cancel the active plan first.
+4. **If on the Free Tier**: The system prompts for security password verification. Once confirmed, your workspace is deleted, cookies cleared, and you are redirected to the login page.
+
+
